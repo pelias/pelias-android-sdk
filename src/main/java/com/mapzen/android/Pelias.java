@@ -1,21 +1,49 @@
 package com.mapzen.android;
 
+import com.mapzen.android.gson.Feature;
+import com.mapzen.android.gson.Geojson;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.client.Header;
+import retrofit.client.Response;
+import retrofit.http.GET;
+import retrofit.http.Path;
+import retrofit.http.Query;
+
 public class Pelias {
-    public static Object search(String query, Callback callback) {
-        if (callback != null) {
-            callback.onSuccess();
-            callback.onError();
-        }
-        return new Object();
+    private static String endpoint;
+
+    public static void setEndpoint(String endpoint) {
+        Pelias.endpoint = endpoint;
     }
 
-    public static Object suggest(String query, Callback callback) {
-        if (callback != null) {
-            callback.onSuccess();
-            callback.onError();
-        }
-        return new Object();
+    public static void generic(String type, String query, Callback<Geojson> callback) {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(endpoint)
+                .build();
+
+        PeliasService service = restAdapter.create(PeliasService.class);
+
+        service.getResults(type, query, callback);
     }
 
+    public static void search(String query, Callback<Geojson> callback) {
+        generic("search", query, callback);
+    }
 
+    public static void suggest(String query, Callback<Geojson> callback) {
+        generic("suggest", query, callback);
+    }
+
+    public interface PeliasService {
+        @GET("/{type}")
+        void getResults(@Path("type") String type, @Query("query") String query, Callback<Geojson> callback);
+
+        @GET("/{type}")
+        Geojson getResults(@Path("type") String type, @Query("query") String query);
+    }
 }
