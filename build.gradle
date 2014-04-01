@@ -3,7 +3,7 @@ apply plugin: 'java'
 group = 'com.mapzen.android'
 version = '0.1-SNAPSHOT'
 
-defaultTasks = ['clean', 'test', 'install']
+defaultTasks = ['clean', 'test']
 
 repositories {
     maven { url 'http://repo.maven.apache.org/maven2' }

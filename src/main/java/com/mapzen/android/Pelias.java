@@ -1,15 +1,9 @@
 package com.mapzen.android;
 
-import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Geojson;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
-import retrofit.client.Header;
-import retrofit.client.Response;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
@@ -42,8 +36,5 @@ public class Pelias {
     public interface PeliasService {
         @GET("/{type}")
         void getResults(@Path("type") String type, @Query("query") String query, Callback<Geojson> callback);
-
-        @GET("/{type}")
-        Geojson getResults(@Path("type") String type, @Query("query") String query);
     }
 }
