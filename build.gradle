@@ -1,5 +1,4 @@
 apply plugin: 'java'
-apply from: 'http://www.tellurianring.com/projects/gradle-plugins/gradle-templates/1.3/apply.groovy'
 
 group = 'com.mapzen.android'
 version = '0.1-SNAPSHOT'
