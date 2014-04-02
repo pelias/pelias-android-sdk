@@ -68,7 +68,7 @@ public class PeliasTest {
         MockResponse response = new MockResponse().setBody(body).setResponseCode(200);
         server.enqueue(response);
         Pelias.search("test", callback);
-        Thread.sleep(200);
+        Thread.sleep(500);
         assertThat(callback.wasSuccessful()).isTrue();
     }
 
@@ -78,7 +78,7 @@ public class PeliasTest {
         MockResponse response = new MockResponse().setResponseCode(500);
         server.enqueue(response);
         Pelias.search("test", callback);
-        Thread.sleep(200);
+        Thread.sleep(500);
         assertThat(callback.wasUnSuccessful()).isTrue();
     }
 
@@ -96,7 +96,7 @@ public class PeliasTest {
         MockResponse response = new MockResponse().setBody(body).setResponseCode(200);
         server.enqueue(response);
         Pelias.suggest("foo", callback);
-        Thread.sleep(200);
+        Thread.sleep(500);
         assertThat(callback.wasSuccessful()).isTrue();
     }
 
@@ -106,7 +106,7 @@ public class PeliasTest {
         server.enqueue(response);
         TestCallback callback = new TestCallback();
         Pelias.search("hello search", callback);
-        Thread.sleep(200);
+        Thread.sleep(500);
         assertThat(callback.wasSuccessful()).isTrue();
     }
 
