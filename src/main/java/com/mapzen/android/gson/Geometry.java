@@ -1,3 +1,4 @@
+
 package com.mapzen.android.gson;
 
 import java.util.ArrayList;

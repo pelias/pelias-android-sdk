@@ -1,3 +1,4 @@
+
 package com.mapzen.android.gson;
 
 import javax.annotation.Generated;
@@ -10,43 +11,43 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class Properties {
 
     @Expose
-    private Object address_name;
+    private String address_name;
     @Expose
     private String admin0_abbr;
     @Expose
     private String admin0_name;
     @Expose
-    private Object admin1_abbr;
+    private String admin1_abbr;
     @Expose
     private String admin1_name;
     @Expose
-    private Object admin2_name;
+    private String admin2_name;
     @Expose
     private String hint;
     @Expose
-    private Object local_admin_name;
+    private String local_admin_name;
     @Expose
     private String locality_name;
     @Expose
     private String name;
     @Expose
-    private Object neighborhood_name;
+    private String neighborhood_name;
     @Expose
-    private Object poi_name;
+    private String poi_name;
     @Expose
-    private Object street_name;
+    private String street_name;
     @Expose
     private String type;
 
-    public Object getAddress_name() {
+    public String getAddress_name() {
         return address_name;
     }
 
-    public void setAddress_name(Object address_name) {
+    public void setAddress_name(String address_name) {
         this.address_name = address_name;
     }
 
-    public Properties withAddress_name(Object address_name) {
+    public Properties withAddress_name(String address_name) {
         this.address_name = address_name;
         return this;
     }
@@ -77,15 +78,15 @@ public class Properties {
         return this;
     }
 
-    public Object getAdmin1_abbr() {
+    public String getAdmin1_abbr() {
         return admin1_abbr;
     }
 
-    public void setAdmin1_abbr(Object admin1_abbr) {
+    public void setAdmin1_abbr(String admin1_abbr) {
         this.admin1_abbr = admin1_abbr;
     }
 
-    public Properties withAdmin1_abbr(Object admin1_abbr) {
+    public Properties withAdmin1_abbr(String admin1_abbr) {
         this.admin1_abbr = admin1_abbr;
         return this;
     }
@@ -103,15 +104,15 @@ public class Properties {
         return this;
     }
 
-    public Object getAdmin2_name() {
+    public String getAdmin2_name() {
         return admin2_name;
     }
 
-    public void setAdmin2_name(Object admin2_name) {
+    public void setAdmin2_name(String admin2_name) {
         this.admin2_name = admin2_name;
     }
 
-    public Properties withAdmin2_name(Object admin2_name) {
+    public Properties withAdmin2_name(String admin2_name) {
         this.admin2_name = admin2_name;
         return this;
     }
@@ -129,15 +130,15 @@ public class Properties {
         return this;
     }
 
-    public Object getLocal_admin_name() {
+    public String getLocal_admin_name() {
         return local_admin_name;
     }
 
-    public void setLocal_admin_name(Object local_admin_name) {
+    public void setLocal_admin_name(String local_admin_name) {
         this.local_admin_name = local_admin_name;
     }
 
-    public Properties withLocal_admin_name(Object local_admin_name) {
+    public Properties withLocal_admin_name(String local_admin_name) {
         this.local_admin_name = local_admin_name;
         return this;
     }
@@ -168,41 +169,41 @@ public class Properties {
         return this;
     }
 
-    public Object getNeighborhood_name() {
+    public String getNeighborhood_name() {
         return neighborhood_name;
     }
 
-    public void setNeighborhood_name(Object neighborhood_name) {
+    public void setNeighborhood_name(String neighborhood_name) {
         this.neighborhood_name = neighborhood_name;
     }
 
-    public Properties withNeighborhood_name(Object neighborhood_name) {
+    public Properties withNeighborhood_name(String neighborhood_name) {
         this.neighborhood_name = neighborhood_name;
         return this;
     }
 
-    public Object getPoi_name() {
+    public String getPoi_name() {
         return poi_name;
     }
 
-    public void setPoi_name(Object poi_name) {
+    public void setPoi_name(String poi_name) {
         this.poi_name = poi_name;
     }
 
-    public Properties withPoi_name(Object poi_name) {
+    public Properties withPoi_name(String poi_name) {
         this.poi_name = poi_name;
         return this;
     }
 
-    public Object getStreet_name() {
+    public String getStreet_name() {
         return street_name;
     }
 
-    public void setStreet_name(Object street_name) {
+    public void setStreet_name(String street_name) {
         this.street_name = street_name;
     }
 
-    public Properties withStreet_name(Object street_name) {
+    public Properties withStreet_name(String street_name) {
         this.street_name = street_name;
         return this;
     }

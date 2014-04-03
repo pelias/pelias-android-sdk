@@ -1,3 +1,4 @@
+
 package com.mapzen.android.gson;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Generated("org.jsonschema2pojo")
-public class Geojson {
+public class Result {
 
     @Expose
     private List<Feature> features = new ArrayList<Feature>();
@@ -24,7 +25,7 @@ public class Geojson {
         this.features = features;
     }
 
-    public Geojson withFeatures(List<Feature> features) {
+    public Result withFeatures(List<Feature> features) {
         this.features = features;
         return this;
     }
@@ -37,7 +38,7 @@ public class Geojson {
         this.type = type;
     }
 
-    public Geojson withType(String type) {
+    public Result withType(String type) {
         this.type = type;
         return this;
     }
