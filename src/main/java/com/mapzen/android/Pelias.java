@@ -1,40 +1,30 @@
 package com.mapzen.android;
 
-import com.mapzen.android.gson.Geojson;
+import com.mapzen.android.gson.Result;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
-import retrofit.http.GET;
-import retrofit.http.Path;
-import retrofit.http.Query;
 
 public class Pelias {
-    private static String endpoint;
+    PeliasService service;
+    String endpoint = "http://pelias.test.mapzen.com/";
 
-    public static void setEndpoint(String endpoint) {
-        Pelias.endpoint = endpoint;
+    protected Pelias(PeliasService service) {
+        this.service = service;
     }
 
-    public static void generic(String type, String query, Callback<Geojson> callback) {
+    public Pelias() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(endpoint)
                 .build();
-
-        PeliasService service = restAdapter.create(PeliasService.class);
-
-        service.getResults(type, query, callback);
+        this.service = restAdapter.create(PeliasService.class);
     }
 
-    public static void search(String query, Callback<Geojson> callback) {
-        generic("search", query, callback);
+    public void suggest(String query, Callback<Result> callback) {
+        service.getSuggest(query, callback);
     }
 
-    public static void suggest(String query, Callback<Geojson> callback) {
-        generic("suggest", query, callback);
-    }
-
-    public interface PeliasService {
-        @GET("/{type}")
-        void getResults(@Path("type") String type, @Query("query") String query, Callback<Geojson> callback);
+    public void search(String query, String viewbox, Callback<Result> callback) {
+        service.getSearch(query, viewbox, callback);
     }
 }
