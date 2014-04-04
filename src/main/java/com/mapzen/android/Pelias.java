@@ -14,10 +14,6 @@ public class Pelias {
         this.service = service;
     }
 
-    protected static void setInstance(PeliasService service) {
-        Pelias.instance = new Pelias(service);
-    }
-
     private Pelias() {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(endpoint)
