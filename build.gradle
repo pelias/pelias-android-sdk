@@ -1,56 +1,72 @@
 buildscript {
-    repositories {
-        mavenCentral()
-        mavenLocal()
-    }
-
-    dependencies {
-        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
-    }
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
 }
 
 apply plugin: 'java'
 apply plugin: 'java-library-distribution'
 apply plugin: 'maven'
-apply plugin: 'nexus'
+apply plugin: 'signing'
 
 group = 'com.mapzen.android'
 version = '0.1-SNAPSHOT'
 
 defaultTasks = ['clean', 'test']
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
+
+artifacts {
+  archives jar
+  archives javadocJar
+  archives sourcesJar
+}
+
+signing {
+  sign configurations.archives
+}
+
 repositories {
-    maven { url 'http://repo.maven.apache.org/maven2' }
+  maven { url 'http://repo.maven.apache.org/maven2' }
 }
 
 dependencies {
-    compile 'com.squareup.okhttp:okhttp:1.5.2'
-    compile 'com.squareup.retrofit:retrofit:1.5.0'
-    compile 'commons-lang:commons-lang:2.2'
-    testCompile 'junit:junit:4.10'
-    testCompile 'org.easytesting:fest-assert-core:2.0M10'
-    testCompile 'com.squareup.okhttp:mockwebserver:1.5.2'
-    testCompile 'org.mockito:mockito-all:1.9.5'
+  compile 'com.squareup.okhttp:okhttp:1.5.2'
+  compile 'com.squareup.retrofit:retrofit:1.5.0'
+  compile 'commons-lang:commons-lang:2.2'
+  testCompile 'junit:junit:4.10'
+  testCompile 'org.easytesting:fest-assert-core:2.0M10'
+  testCompile 'com.squareup.okhttp:mockwebserver:1.5.2'
+  testCompile 'org.mockito:mockito-all:1.9.5'
 }
 
 def defaultEncoding = 'UTF-8'
 
 compileJava {
-    options.encoding = defaultEncoding
+  options.encoding = defaultEncoding
 }
 
 compileTestJava {
-    options.encoding = defaultEncoding
+  options.encoding = defaultEncoding
 }
 
 javadoc {
-    options.encoding = defaultEncoding
+  options.encoding = defaultEncoding
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.artifactId = 'pelias-android-sdk'
-    }
+if (version.contains("SNAPSHOT")) {
+  sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+} else {
+  sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
 
 configurations {
@@ -58,9 +74,52 @@ configurations {
 }
 
 uploadArchives {
-    repositories.mavenDeployer {
-        pom.artifactId = 'pelias-android-sdk'
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: sonatypeRepositoryUrl) {
+        authentication(userName: sonatypeUsername, password: sonatypePassword)
+      }
+
+      pom.project {
+        name 'Pelias Android SDK'
+        packaging 'jar'
+        description 'Android SDK for Pelias'
+        url 'http://github.com/mapzen/pelias-android-sdk'
+
+        scm {
+          url 'http://github.com/mapzen/pelias-android-sdk'
+          connection 'scm:git:git://github.com/mapzen/pelias-android-sdk.git'
+          developerConnection 'scm:git:ssh://git@github.com/mapzen/pelias-android-sdk.git'
+        }
+
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'baldur'
+            name 'Baldur Gudbjornsson'
+            email 'baldur@mapzen.com'
+          }
+
+          developer {
+            id 'ecgreb'
+            name 'Chuck Greb'
+            email 'chuck@mapzen.com'
+          }
+        }
+
+        organization {
+          name 'Mapzen'
+          url 'http://mapzen.com'
+        }
+      }
     }
+  }
 }
-
-
