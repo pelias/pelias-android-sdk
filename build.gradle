@@ -31,9 +31,6 @@ artifacts {
   archives sourcesJar
 }
 
-signing {
-  sign configurations.archives
-}
 
 repositories {
   maven { url 'http://repo.maven.apache.org/maven2' }
@@ -71,6 +68,24 @@ if (version.contains("SNAPSHOT")) {
 
 configurations {
   provided
+}
+
+if (project.hasProperty('singing.keyId')) {
+  signing {
+    sign configurations.archives
+  }
+} else {
+  task signArchives {
+    // Do nothing.
+  }
+}
+
+if (!project.hasProperty('sontypeUsername')) {
+    sonatypeUsername = ""
+}
+
+if (!project.hasProperty('sonatypePassword')) {
+  sonatypePassword = ""
 }
 
 uploadArchives {
