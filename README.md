@@ -36,6 +36,15 @@ import static com.mapzen.android.Pelias.getPelias;
 getPelias().search("term to search", "<viewbox>", Callback<Result>);
 ````
 
+#### Custom Endpoint
+
+If you have deployed your own instance of pelias described [here][2] you can set it on the class before initializing
+
+```java
+getPeliasWithEndpoint("http://your-pelias-domain.com").search("term to search", "<viewbox>", Callback<Result>);
+```
+
+
 #### Testing
 
 The current stratedgy for testing involves mocking the service instance which is an retrofit interface which describes the paths to the API.
@@ -116,3 +125,4 @@ compile 'com.mapzen.android:pelias-android-sdk:0.1'
 ```
 
 [1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/0.1/pelias-android-sdk-0.1.jar
+[2]: https://github.com/mapzen/pelias#setup-performance-information
