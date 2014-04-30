@@ -6,19 +6,34 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 
 public class Pelias {
-    PeliasService service;
-    static String endpoint = "http://pelias.test.mapzen.com/";
+    private PeliasService service;
+    public static final String DEFAULT_SERVICE_ENDPOINT = "http://pelias.test.mapzen.com/";
     static Pelias instance = null;
 
     protected Pelias(PeliasService service) {
         this.service = service;
     }
 
+    private Pelias(String endpoint) {
+        initService(endpoint);
+    }
+
     private Pelias() {
+        initService(DEFAULT_SERVICE_ENDPOINT);
+    }
+
+    private void initService(String serviceEndpoint) {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(endpoint)
+                .setEndpoint(serviceEndpoint)
                 .build();
         this.service = restAdapter.create(PeliasService.class);
+    }
+
+    public static Pelias getPeliasWithEndpoint(String endpoint) {
+        if (instance == null) {
+            instance = new Pelias(endpoint);
+        }
+        return instance;
     }
 
     public static Pelias getPelias() {
