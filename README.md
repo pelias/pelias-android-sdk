@@ -3,7 +3,7 @@ pelias-android-sdk
 
 Android sdk for pelias
 
-[![Build Status](https://travis-ci.org/mapzen/pelias-android-sdk.svg?branch=master)](https://travis-ci.org/mapzen/pelias-android-sdk)
+[![Circle CI Build Status](https://circleci.com/gh/mapzen/pelias-android-sdk.png?circle-token=6e6203a065375a8fb6fabb5a689c11dcd8fa78cf)](https://circleci.com/gh/mapzen/pelias-android-sdk)
 
 ## Usage
 
