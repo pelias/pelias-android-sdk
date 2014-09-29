@@ -8,8 +8,8 @@ import retrofit.http.Query;
 
 public interface PeliasService {
     @GET("/suggest")
-    void getSuggest(@Query("query") String query, Callback<Result> callback);
+    void getSuggest(@Query("input") String query, @Query("lat") String lat, @Query("lon") String lon, Callback<Result> callback);
 
     @GET("/search")
-    void getSearch(@Query("query") String query, @Query("viewbox") String viewbox, Callback<Result> callback);
+    void getSearch(@Query("input") String query, @Query("lat") String lat, @Query("lon") String lon, Callback<Result> callback);
 }

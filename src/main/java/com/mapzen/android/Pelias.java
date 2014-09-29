@@ -7,7 +7,7 @@ import retrofit.RestAdapter;
 
 public class Pelias {
     private PeliasService service;
-    public static final String DEFAULT_SERVICE_ENDPOINT = "http://pelias.test.mapzen.com/";
+    public static final String DEFAULT_SERVICE_ENDPOINT = "http://pelias.mapzen.com/";
     static Pelias instance = null;
 
     protected Pelias(PeliasService service) {
@@ -43,11 +43,11 @@ public class Pelias {
         return instance;
     }
 
-    public void suggest(String query, Callback<Result> callback) {
-        service.getSuggest(query, callback);
+    public void suggest(String query, String lat, String lon, Callback<Result> callback) {
+        service.getSuggest(query, lat, lon, callback);
     }
 
-    public void search(String query, String viewbox, Callback<Result> callback) {
-        service.getSearch(query, viewbox, callback);
+    public void search(String query, String lat, String lon, Callback<Result> callback) {
+        service.getSearch(query, lat, lon, callback);
     }
 }
