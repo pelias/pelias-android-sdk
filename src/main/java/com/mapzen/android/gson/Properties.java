@@ -29,7 +29,7 @@ public class Properties {
     @Expose
     private String locality_name;
     @Expose
-    private String name;
+    private String text;
     @Expose
     private String neighborhood_name;
     @Expose
@@ -156,16 +156,16 @@ public class Properties {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getText() {
+        return text;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public Properties withName(String name) {
-        this.name = name;
+    public Properties withText(String text) {
+        this.text = text;
         return this;
     }
 
