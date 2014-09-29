@@ -38,14 +38,14 @@ public class PeliasTest {
 
     @Test
     public void search_getSearch() throws Exception {
-        peliasWithMock.search("test", "1,2,3,4", callback);
-        Mockito.verify(mock).getSearch(Mockito.eq("test"), Mockito.eq("1,2,3,4"), cb.capture());
+        peliasWithMock.search("test", "1", "2", callback);
+        Mockito.verify(mock).getSearch(Mockito.eq("test"), Mockito.eq("1"), Mockito.eq("2"), cb.capture());
     }
 
     @Test
     public void suggest_getSuggest() throws Exception {
-        peliasWithMock.suggest("test", callback);
-        Mockito.verify(mock).getSuggest(Mockito.eq("test"), cb.capture());
+        peliasWithMock.suggest("test", "1", "2", callback);
+        Mockito.verify(mock).getSuggest(Mockito.eq("test"), Mockito.eq("1"), Mockito.eq("2"), cb.capture());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class PeliasTest {
         server.enqueue(response);
         server.play();
         Pelias pelias = Pelias.getPeliasWithEndpoint(server.getUrl("/").toString());
-        pelias.suggest("test", callback);
+        pelias.suggest("test", "1", "2", callback);
         RecordedRequest request = server.takeRequest();
         assertThat(request.getPath()).contains("/suggest");
         server.shutdown();
