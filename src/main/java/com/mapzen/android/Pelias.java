@@ -7,7 +7,7 @@ import retrofit.RestAdapter;
 
 public class Pelias {
     private PeliasService service;
-    public static final String DEFAULT_SERVICE_ENDPOINT = "http://pelias.mapzen.com/";
+    public static final String DEFAULT_SERVICE_ENDPOINT = "https://pelias.mapzen.com/";
     static Pelias instance = null;
 
     protected Pelias(PeliasService service) {
