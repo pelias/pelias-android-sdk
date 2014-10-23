@@ -12,4 +12,7 @@ public interface PeliasService {
 
     @GET("/search")
     void getSearch(@Query("input") String query, @Query("lat") String lat, @Query("lon") String lon, Callback<Result> callback);
+
+    @GET("/doc")
+    void getDoc(@Query("id") String typeAndId, Callback<Result> callback);
 }
