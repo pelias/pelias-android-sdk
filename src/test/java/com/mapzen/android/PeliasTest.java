@@ -37,6 +37,12 @@ public class PeliasTest {
     }
 
     @Test
+    public void doc_getDocument() throws Exception {
+        peliasWithMock.doc("osmnode", 15, callback);
+        Mockito.verify(mock).getDoc(Mockito.eq("osmnode:15"), cb.capture());
+    }
+
+    @Test
     public void search_getSearch() throws Exception {
         peliasWithMock.search("test", "1", "2", callback);
         Mockito.verify(mock).getSearch(Mockito.eq("test"), Mockito.eq("1"), Mockito.eq("2"), cb.capture());
