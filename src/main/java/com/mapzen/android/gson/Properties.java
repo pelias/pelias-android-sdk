@@ -29,6 +29,10 @@ public class Properties {
     private String neighborhood;
     @Expose
     private String text;
+    @Expose
+    private String type;
+    @Expose
+    private String id;
 
     public String getAdmin0() {
         return admin0;
@@ -110,4 +114,19 @@ public class Properties {
         this.text = text;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }
