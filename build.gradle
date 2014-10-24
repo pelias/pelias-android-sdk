@@ -70,7 +70,7 @@ configurations {
   provided
 }
 
-if (project.hasProperty('singing.keyId')) {
+if (project.hasProperty('signing.keyId')) {
   signing {
     sign configurations.archives
   }
@@ -80,12 +80,12 @@ if (project.hasProperty('singing.keyId')) {
   }
 }
 
-if (!project.hasProperty('sontypeUsername')) {
+if (!project.hasProperty('sonatypeUsername')) {
     sonatypeUsername = ""
 }
 
 if (!project.hasProperty('sonatypePassword')) {
-  sonatypePassword = ""
+    sonatypePassword = ""
 }
 
 uploadArchives {
