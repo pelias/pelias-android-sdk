@@ -51,7 +51,7 @@ public class Pelias {
         service.getSearch(query, lat, lon, callback);
     }
 
-    public void doc(String type, long id, Callback<Result> callback) {
-        service.getDoc(type + ":" + String.valueOf(id), callback);
+    public void doc(String type, String id, Callback<Result> callback) {
+        service.getDoc(type + ":" + id, callback);
     }
 }
