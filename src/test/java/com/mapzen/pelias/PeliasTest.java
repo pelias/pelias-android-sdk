@@ -67,6 +67,11 @@ public class PeliasTest {
         server.shutdown();
     }
 
+    @Test
+    public void shouldFail() throws Exception {
+        assertThat(false).isTrue();
+    }
+
     class TestCallback implements Callback<Result> {
         @Override
         public void success(Result o, Response response) {
