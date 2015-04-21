@@ -1,6 +1,6 @@
-package com.mapzen.android;
+package com.mapzen.pelias;
 
-import com.mapzen.android.gson.Result;
+import com.mapzen.pelias.gson.Result;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;

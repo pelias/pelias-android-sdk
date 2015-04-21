@@ -1,32 +1,47 @@
 
-package com.mapzen.android.gson;
+package com.mapzen.pelias.gson;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import javax.annotation.Generated;
+
 @Generated("org.jsonschema2pojo")
-public class Result {
+public class Feature {
 
     @Expose
-    private List<Feature> features = new ArrayList<Feature>();
+    private Geometry geometry;
+    @Expose
+    private Properties properties;
     @Expose
     private String type;
 
-    public List<Feature> getFeatures() {
-        return features;
+    public Geometry getGeometry() {
+        return geometry;
     }
 
-    public void setFeatures(List<Feature> features) {
-        this.features = features;
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
     }
 
-    public Result withFeatures(List<Feature> features) {
-        this.features = features;
+    public Feature withGeometry(Geometry geometry) {
+        this.geometry = geometry;
+        return this;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
+    public Feature withProperties(Properties properties) {
+        this.properties = properties;
         return this;
     }
 
@@ -38,7 +53,7 @@ public class Result {
         this.type = type;
     }
 
-    public Result withType(String type) {
+    public Feature withType(String type) {
         this.type = type;
         return this;
     }
