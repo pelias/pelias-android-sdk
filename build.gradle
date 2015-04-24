@@ -15,7 +15,15 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.mapzen.android'
 version = '0.4-SNAPSHOT'
 
-defaultTasks = ['clean', 'test']
+defaultTasks = ['clean', 'assembleDebug', 'copyTask', 'testDebug', 'install']
+
+task copyTask(type: Copy) {
+  println "Copying com/mapzen/pelias/R.java to android/support/v7/appcompat/R.java"
+  from 'build/generated/source/r/debug/com/mapzen/pelias'
+  into 'build/generated/source/r/debug/android/support/v7/appcompat'
+  include 'R.java'
+  filter { line -> line.contains('package com.mapzen.pelias;') ? 'package android.support.v7.appcompat;' : line }
+}
 
 android {
   compileSdkVersion 21
@@ -32,6 +40,20 @@ android {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
+  }
+  sourceSets {
+    test {
+      java.srcDir file('src/test/java')
+      java.srcDir file('build/generated/source/r/debug')
+    }
+  }
+}
+
+tasks.withType(Test) {
+  testLogging {
+    exceptionFormat "full"
+    events "started", "skipped", "passed", "failed"
+    showStandardStreams true
   }
 }
 
