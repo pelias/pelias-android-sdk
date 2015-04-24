@@ -13,4 +13,4 @@ dependencies:
 
 test:
   override:
-    - ./gradlew clean assemble test
+    - ./gradlew
