@@ -1,4 +1,4 @@
-package com.mapzen.pelias;
+package com.mapzen.pelias.widget;
 
 import org.robolectric.annotation.HiddenApi;
 import org.robolectric.annotation.Implementation;

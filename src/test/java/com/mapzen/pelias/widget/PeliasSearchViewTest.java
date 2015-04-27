@@ -1,7 +1,6 @@
 package com.mapzen.pelias.widget;
 
 import com.mapzen.pelias.BuildConfig;
-import com.mapzen.pelias.ShadowInputMethodManager;
 
 import org.junit.Before;
 import org.junit.Test;
