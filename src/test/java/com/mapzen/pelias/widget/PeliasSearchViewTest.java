@@ -1,13 +1,13 @@
 package com.mapzen.pelias.widget;
 
 import com.mapzen.pelias.BuildConfig;
+import com.mapzen.pelias.ShadowInputMethodManager;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 
 import android.app.Activity;
@@ -17,9 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, emulateSdk = 21)
+@Config(constants = BuildConfig.class, emulateSdk = 21, shadows = {ShadowInputMethodManager.class})
 public class PeliasSearchViewTest {
     private static final Activity ACTIVITY = Robolectric.setupActivity(Activity.class);
 
@@ -41,7 +42,7 @@ public class PeliasSearchViewTest {
         listView.setVisibility(View.GONE);
         peliasSearchView.setAutoCompleteListView(listView);
         AutoCompleteTextView queryText = getQueryTextView();
-        Shadows.shadowOf(queryText).setViewFocus(true);
+        shadowOf(queryText).setViewFocus(true);
         assertThat(listView.getVisibility()).isEqualTo(View.VISIBLE);
     }
 
@@ -51,8 +52,32 @@ public class PeliasSearchViewTest {
         listView.setVisibility(View.VISIBLE);
         peliasSearchView.setAutoCompleteListView(listView);
         AutoCompleteTextView queryText = getQueryTextView();
-        Shadows.shadowOf(queryText).setViewFocus(false);
+        shadowOf(queryText).setViewFocus(false);
         assertThat(listView.getVisibility()).isEqualTo(View.GONE);
+    }
+
+    @Test
+    public void setAutoCompleteListView_shouldShowImeWhenQueryGetsFocus() throws Exception {
+        ListView listView = new ListView(ACTIVITY);
+        listView.setVisibility(View.GONE);
+        peliasSearchView.setAutoCompleteListView(listView);
+        AutoCompleteTextView queryText = getQueryTextView();
+        shadowOf(queryText).setViewFocus(false);
+        shadowOf(queryText).setViewFocus(true);
+        Robolectric.flushForegroundScheduler();
+        assertThat(ShadowInputMethodManager.isSoftInputVisible()).isTrue();
+    }
+
+    @Test
+    public void setAutoCompleteListView_shouldHideImeWhenQueryGetsFocus() throws Exception {
+        ListView listView = new ListView(ACTIVITY);
+        listView.setVisibility(View.GONE);
+        peliasSearchView.setAutoCompleteListView(listView);
+        AutoCompleteTextView queryText = getQueryTextView();
+        shadowOf(queryText).setViewFocus(true);
+        shadowOf(queryText).setViewFocus(false);
+        Robolectric.flushForegroundScheduler();
+        assertThat(ShadowInputMethodManager.isSoftInputVisible()).isFalse();
     }
 
     private AutoCompleteTextView getQueryTextView() {
