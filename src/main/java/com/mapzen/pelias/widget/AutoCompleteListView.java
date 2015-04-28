@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -72,6 +73,12 @@ public class AutoCompleteListView extends ListView {
                 updateEmptyView();
             }
         });
+    }
+
+    @Override
+    public void setAnimation(Animation animation) {
+        super.setAnimation(animation);
+        emptyView.setAnimation(animation);
     }
 
     private void updateEmptyView() {

@@ -11,8 +11,10 @@ import org.robolectric.annotation.Config;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 
+import static android.view.animation.AnimationUtils.loadAnimation;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.buildActivity;
 
@@ -139,5 +141,14 @@ public class AutoCompleteListViewTest {
         autoCompleteListView.setEmptyView(empty);
         autoCompleteListView.setVisibility(View.VISIBLE);
         assertThat(empty.getVisibility()).isEqualTo(View.GONE);
+    }
+
+    @Test
+    public void setAnimation_shouldApplyAnimationToEmptyView() throws Exception {
+        final Animation slideIn = loadAnimation(ACTIVITY, R.anim.slide_in);
+        View empty = new View(ACTIVITY);
+        autoCompleteListView.setEmptyView(empty);
+        autoCompleteListView.setAnimation(slideIn);
+        assertThat(empty.getAnimation()).isEqualTo(slideIn);
     }
 }
