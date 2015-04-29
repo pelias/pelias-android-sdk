@@ -1,6 +1,7 @@
 package com.mapzen.pelias.widget;
 
 import com.mapzen.pelias.R;
+import com.mapzen.pelias.SavedSearch;
 
 import android.content.Context;
 import android.os.ResultReceiver;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Field;
@@ -16,7 +19,7 @@ import java.lang.reflect.Method;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
 
-public class PeliasSearchView extends SearchView {
+public class PeliasSearchView extends SearchView implements SearchView.OnQueryTextListener {
     public static final String TAG = PeliasSearchView.class.getSimpleName();
 
     private static final AutoCompleteTextViewReflector HIDDEN_METHOD_INVOKER =
@@ -42,24 +45,30 @@ public class PeliasSearchView extends SearchView {
         }
     };
 
+    private ListView autoCompleteListView;
+    private SavedSearch savedSearch;
+
     public PeliasSearchView(Context context) {
         super(context);
         disableDefaultSoftKeyboardBehaviour();
+        setOnQueryTextListener(this);
     }
 
     public void setAutoCompleteListView(final ListView listView) {
+        autoCompleteListView = listView;
         setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (hasFocus) {
                     final Animation slideIn = loadAnimation(getContext(), R.anim.slide_in);
-                    listView.setAnimation(slideIn);
+                    loadSavedSearches();
                     listView.setVisibility(VISIBLE);
+                    listView.setAnimation(slideIn);
                     postDelayed(showImeRunnable, 300);
                 } else {
                     final Animation slideOut = loadAnimation(getContext(), R.anim.slide_out);
-                    listView.setAnimation(slideOut);
                     listView.setVisibility(GONE);
+                    listView.setAnimation(slideOut);
                     postDelayed(hideImeRunnable, 300);
                 }
             }
@@ -82,6 +91,39 @@ public class PeliasSearchView extends SearchView {
         } catch (IllegalAccessException | NoSuchFieldException e) {
             Log.e(TAG, "Unable to override default soft keyboard behavior", e);
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        if (savedSearch != null) {
+            savedSearch.store(query);
+        }
+
+        clearFocus();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    public void setSavedSearch(SavedSearch savedSearch) {
+        this.savedSearch = savedSearch;
+    }
+
+    public void loadSavedSearches() {
+        if (autoCompleteListView == null || autoCompleteListView.getAdapter() == null) {
+            return;
+        }
+
+        final HeaderViewListAdapter headerViewListAdapter =
+                (HeaderViewListAdapter) autoCompleteListView.getAdapter();
+        final AutoCompleteAdapter adapter =
+                (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
+        adapter.clear();
+        adapter.addAll(savedSearch.getTerms());
+        adapter.notifyDataSetChanged();
     }
 
     /**

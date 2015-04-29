@@ -78,7 +78,9 @@ public class AutoCompleteListView extends ListView {
     @Override
     public void setAnimation(Animation animation) {
         super.setAnimation(animation);
-        emptyView.setAnimation(animation);
+        if (emptyView != null && getAdapter() != null && getAdapter().isEmpty()) {
+            emptyView.setAnimation(animation);
+        }
     }
 
     private void updateEmptyView() {

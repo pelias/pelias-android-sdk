@@ -146,7 +146,10 @@ public class AutoCompleteListViewTest {
     @Test
     public void setAnimation_shouldApplyAnimationToEmptyView() throws Exception {
         final Animation slideIn = loadAnimation(ACTIVITY, R.anim.slide_in);
-        View empty = new View(ACTIVITY);
+        final ArrayAdapter adapter = new ArrayAdapter(ACTIVITY, 0);
+        final View empty = new View(ACTIVITY);
+
+        autoCompleteListView.setAdapter(adapter);
         autoCompleteListView.setEmptyView(empty);
         autoCompleteListView.setAnimation(slideIn);
         assertThat(empty.getAnimation()).isEqualTo(slideIn);

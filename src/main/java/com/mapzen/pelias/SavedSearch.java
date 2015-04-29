@@ -10,8 +10,10 @@ import android.os.Parcel;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import static android.provider.BaseColumns._ID;
 
@@ -173,6 +175,15 @@ public final class SavedSearch {
         }
 
         return cursor;
+    }
+
+    public List<String> getTerms() {
+        final ArrayList<String> terms = new ArrayList<>();
+        for (Member member : store) {
+            terms.add(member.getTerm());
+        }
+
+        return terms;
     }
 
     private void truncate() {
