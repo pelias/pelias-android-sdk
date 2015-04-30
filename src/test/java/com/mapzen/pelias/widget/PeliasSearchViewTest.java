@@ -1,7 +1,11 @@
 package com.mapzen.pelias.widget;
 
 import com.mapzen.pelias.BuildConfig;
+import com.mapzen.pelias.Pelias;
+import com.mapzen.pelias.PeliasService;
+import com.mapzen.pelias.PeliasTest;
 import com.mapzen.pelias.SavedSearch;
+import com.mapzen.pelias.gson.Result;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +19,11 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.http.Query;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
@@ -112,10 +121,58 @@ public class PeliasSearchViewTest {
         assertThat(((TextView) adapter.getView(0, null, null)).getText()).isEqualTo("query");
     }
 
+    @Test
+    public void onQueryTextSubmit_shouldFetchSearchResults() throws Exception {
+        final Pelias pelias = new TestPelias();
+        final TestCallback callback = new TestCallback();
+        pelias.setLocationProvider(new PeliasTest.TestLocationProvider());
+        peliasSearchView.setPelias(pelias);
+        peliasSearchView.setCallback(callback);
+        peliasSearchView.setQuery("query", true);
+        assertThat(callback.result).isNotNull();
+        assertThat(callback.error).isNull();
+    }
+
     private AutoCompleteTextView getQueryTextView() {
         final LinearLayout linearLayout1 = (LinearLayout) peliasSearchView.getChildAt(0);
         final LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
         final LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
         return (AutoCompleteTextView) linearLayout3.getChildAt(0);
+    }
+
+    private class TestPelias extends Pelias {
+        protected TestPelias() {
+            super(new TestPeliasService());
+        }
+    }
+
+    private class TestPeliasService implements PeliasService {
+        @Override public void getSuggest(@Query("input") String query, @Query("lat") String lat,
+                @Query("lon")String lon, Callback<Result> callback) {
+            callback.success(new Result(), null);
+        }
+
+        @Override public void getSearch(@Query("input") String query, @Query("lat") String lat,
+                @Query("lon") String lon, Callback<Result> callback) {
+            callback.success(new Result(), null);
+
+        }
+
+        @Override public void getDoc(@Query("id")String typeAndId, Callback<Result> callback) {
+            callback.success(new Result(), null);
+        }
+    }
+
+    private class TestCallback implements Callback<Result> {
+        private Result result;
+        private RetrofitError error;
+
+        @Override public void success(Result result, Response response) {
+            this.result = result;
+        }
+
+        @Override public void failure(RetrofitError error) {
+            this.error = error;
+        }
     }
 }

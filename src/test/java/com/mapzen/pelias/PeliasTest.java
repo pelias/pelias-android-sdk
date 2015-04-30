@@ -93,7 +93,7 @@ public class PeliasTest {
         }
     }
 
-    class TestLocationProvider implements PeliasLocationProvider {
+    public static class TestLocationProvider implements PeliasLocationProvider {
         @Override public String getLat() {
             return "1.0";
         }

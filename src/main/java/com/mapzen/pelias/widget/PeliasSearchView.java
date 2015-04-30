@@ -1,7 +1,9 @@
 package com.mapzen.pelias.widget;
 
+import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
+import com.mapzen.pelias.gson.Result;
 
 import android.content.Context;
 import android.os.ResultReceiver;
@@ -10,12 +12,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import retrofit.Callback;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
 
@@ -47,6 +50,8 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     private ListView autoCompleteListView;
     private SavedSearch savedSearch;
+    private Pelias pelias;
+    private Callback<Result> callback;
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -95,6 +100,10 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        if (pelias != null) {
+            pelias.search(query, callback);
+        }
+
         if (savedSearch != null) {
             savedSearch.store(query);
         }
@@ -124,6 +133,14 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         adapter.clear();
         adapter.addAll(savedSearch.getTerms());
         adapter.notifyDataSetChanged();
+    }
+
+    public void setPelias(Pelias pelias) {
+        this.pelias = pelias;
+    }
+
+    public void setCallback(Callback<Result> callback) {
+        this.callback = callback;
     }
 
     /**
