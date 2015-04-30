@@ -194,6 +194,13 @@ public class SavedSearchTest {
     }
 
     @Test
+    public void deserialize_shouldHandleNull() throws Exception {
+        savedSearch.deserialize(null);
+        Iterator<SavedSearch.Member> it = savedSearch.getIterator();
+        assertThat(it.hasNext()).isFalse();
+    }
+
+    @Test
     public void getCursor_shouldReturnCursorWithSavedSearchTerms() throws Exception {
         savedSearch.store("saved query 1");
         savedSearch.store("saved query 2", payload);

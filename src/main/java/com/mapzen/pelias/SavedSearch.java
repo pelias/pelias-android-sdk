@@ -141,7 +141,7 @@ public final class SavedSearch {
     }
 
     public void deserialize(String serializedSavedSearch) {
-        if (serializedSavedSearch.isEmpty()) {
+        if (serializedSavedSearch == null || serializedSavedSearch.isEmpty()) {
             return;
         }
 
