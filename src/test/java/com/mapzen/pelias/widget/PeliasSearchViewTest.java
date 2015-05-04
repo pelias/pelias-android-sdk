@@ -143,6 +143,14 @@ public class PeliasSearchViewTest {
         assertThat(peliasSearchView.getQuery().toString()).isEqualTo("query");
     }
 
+    @Test
+    public void onQueryTextSubmit_shouldNotifyOnSubmitListener() throws Exception {
+        TestOnSubmitListener listener = new TestOnSubmitListener();
+        peliasSearchView.setOnSubmitListener(listener);
+        peliasSearchView.onQueryTextSubmit("query");
+        assertThat(listener.submit).isTrue();
+    }
+
     private AutoCompleteTextView getQueryTextView() {
         final LinearLayout linearLayout1 = (LinearLayout) peliasSearchView.getChildAt(0);
         final LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
@@ -197,6 +205,13 @@ public class PeliasSearchViewTest {
 
         @Override public int getCount() {
             return 1;
+        }
+    }
+
+    private class TestOnSubmitListener implements PeliasSearchView.OnSubmitListener {
+        private boolean submit;
+        @Override public void onSubmit() {
+            submit = true;
         }
     }
 }

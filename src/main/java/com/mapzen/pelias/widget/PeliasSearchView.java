@@ -54,6 +54,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private SavedSearch savedSearch;
     private Pelias pelias;
     private Callback<Result> callback;
+    private OnSubmitListener onSubmitListener;
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -115,6 +116,10 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
         if (savedSearch != null) {
             savedSearch.store(query);
+        }
+
+        if (onSubmitListener != null) {
+            onSubmitListener.onSubmit();
         }
 
         clearFocus();
@@ -180,5 +185,13 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
             // Hidden method failed, call public version instead
             imm.showSoftInput(view, flags);
         }
+    }
+
+    public void setOnSubmitListener(OnSubmitListener onSubmitListener) {
+        this.onSubmitListener = onSubmitListener;
+    }
+
+    public interface OnSubmitListener {
+        public void onSubmit();
     }
 }
