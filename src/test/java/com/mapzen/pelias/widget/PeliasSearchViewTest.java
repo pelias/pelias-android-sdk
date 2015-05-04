@@ -16,6 +16,7 @@ import org.robolectric.annotation.Config;
 
 import android.app.Activity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -133,6 +134,15 @@ public class PeliasSearchViewTest {
         assertThat(callback.error).isNull();
     }
 
+    @Test
+    public void onItemClick_shouldSetQuery() throws Exception {
+        final AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+        listView.setAdapter(new TestAdapter());
+        peliasSearchView.setAutoCompleteListView(listView);
+        listView.performItemClick(null, 1, 0);
+        assertThat(peliasSearchView.getQuery().toString()).isEqualTo("query");
+    }
+
     private AutoCompleteTextView getQueryTextView() {
         final LinearLayout linearLayout1 = (LinearLayout) peliasSearchView.getChildAt(0);
         final LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
@@ -173,6 +183,20 @@ public class PeliasSearchViewTest {
 
         @Override public void failure(RetrofitError error) {
             this.error = error;
+        }
+    }
+
+    private class TestAdapter extends ArrayAdapter<String> {
+        public TestAdapter() {
+            super(ACTIVITY, android.R.layout.simple_list_item_1);
+        }
+
+        @Override public String getItem(int position) {
+            return "query";
+        }
+
+        @Override public int getCount() {
+            return 1;
         }
     }
 }

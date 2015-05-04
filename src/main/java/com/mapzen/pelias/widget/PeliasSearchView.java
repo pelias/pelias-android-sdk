@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.HeaderViewListAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Field;
@@ -76,6 +78,13 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                     listView.setAnimation(slideOut);
                     postDelayed(hideImeRunnable, 300);
                 }
+            }
+        });
+
+        autoCompleteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setQuery(autoCompleteListView.getAdapter().getItem(position).toString(), true);
             }
         });
     }
