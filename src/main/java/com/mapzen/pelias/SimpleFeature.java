@@ -33,6 +33,7 @@ public class SimpleFeature implements Parcelable {
     private HashMap<String, String> properties = new HashMap<String, String>();
     private double lat, lon;
     private String hint;
+    private Feature feature;
 
     public static SimpleFeature readFromParcel(Parcel in) {
         SimpleFeature simpleFeature = new SimpleFeature();
@@ -67,7 +68,12 @@ public class SimpleFeature implements Parcelable {
         simpleFeature.setLon(feature.getGeometry().getCoordinates().get(0));
         simpleFeature.setLat(feature.getGeometry().getCoordinates().get(1));
         simpleFeature.setHint(feature.getProperties().getText());
+        simpleFeature.feature = feature;
         return simpleFeature;
+    }
+
+    public Feature getFeature() {
+        return feature;
     }
 
     @Override

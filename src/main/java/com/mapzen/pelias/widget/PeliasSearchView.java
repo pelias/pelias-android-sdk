@@ -3,6 +3,7 @@ package com.mapzen.pelias.widget;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.pelias.gson.Feature;
 import com.mapzen.pelias.gson.Result;
 
@@ -77,11 +78,13 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                     listView.setVisibility(VISIBLE);
                     listView.setAnimation(slideIn);
                     postDelayed(showImeRunnable, 300);
+                    setOnQueryTextListener(PeliasSearchView.this);
                 } else {
                     final Animation slideOut = loadAnimation(getContext(), R.anim.slide_out);
                     listView.setVisibility(GONE);
                     listView.setAnimation(slideOut);
                     postDelayed(hideImeRunnable, 300);
+                    setOnQueryTextListener(null);
                 }
             }
         });
@@ -89,7 +92,22 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         autoCompleteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                setQuery(autoCompleteListView.getAdapter().getItem(position).toString(), true);
+                final AutoCompleteItem item =
+                        (AutoCompleteItem) autoCompleteListView.getAdapter().getItem(position);
+
+                if (item.getSimpleFeature() == null) {
+                    setQuery(item.getText(), true);
+                } else {
+                    final Result result = new Result();
+                    final ArrayList<Feature> features = new ArrayList<>(1);
+                    clearFocus();
+                    setQuery(item.getText(), false);
+                    features.add(item.getSimpleFeature().getFeature());
+                    result.setFeatures(features);
+                    if (callback != null) {
+                        callback.success(result, null);
+                    }
+                }
             }
         });
     }
@@ -154,10 +172,10 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
         pelias.suggest(text, new Callback<Result>() {
             @Override public void success(Result result, Response response) {
-                final ArrayList<String> terms = new ArrayList<>();
+                final ArrayList<AutoCompleteItem> items = new ArrayList<>();
                 final List<Feature> features = result.getFeatures();
                 for (Feature feature : features) {
-                    terms.add(feature.getProperties().getText());
+                    items.add(new AutoCompleteItem(SimpleFeature.fromFeature(feature)));
                 }
 
                 if (autoCompleteListView == null) {
@@ -169,7 +187,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                 final AutoCompleteAdapter adapter =
                         (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
                 adapter.clear();
-                adapter.addAll(terms);
+                adapter.addAll(items);
                 adapter.notifyDataSetChanged();
             }
 
@@ -192,8 +210,14 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                 (HeaderViewListAdapter) autoCompleteListView.getAdapter();
         final AutoCompleteAdapter adapter =
                 (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
+        final List<String> terms = savedSearch.getTerms();
+        final ArrayList<AutoCompleteItem> items = new ArrayList<>();
+        for (String term : terms) {
+            items.add(new AutoCompleteItem(term));
+        }
+
         adapter.clear();
-        adapter.addAll(savedSearch.getTerms());
+        adapter.addAll(items);
         adapter.notifyDataSetChanged();
     }
 

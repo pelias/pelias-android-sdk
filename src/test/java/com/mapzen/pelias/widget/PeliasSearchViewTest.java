@@ -194,13 +194,13 @@ public class PeliasSearchViewTest {
         }
     }
 
-    private class TestAdapter extends ArrayAdapter<String> {
+    private class TestAdapter extends ArrayAdapter<AutoCompleteItem> {
         public TestAdapter() {
             super(ACTIVITY, android.R.layout.simple_list_item_1);
         }
 
-        @Override public String getItem(int position) {
-            return "query";
+        @Override public AutoCompleteItem getItem(int position) {
+            return new AutoCompleteItem("query");
         }
 
         @Override public int getCount() {
