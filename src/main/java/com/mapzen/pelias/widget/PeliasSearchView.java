@@ -152,14 +152,8 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     public boolean onQueryTextChange(String text) {
         if (text.length() < 3) {
             loadSavedSearches();
-            if (autoCompleteListView instanceof AutoCompleteListView) {
-                ((AutoCompleteListView) autoCompleteListView).showHeader();
-            }
         } else {
             fetchAutoCompleteSuggestions(text);
-            if (autoCompleteListView instanceof AutoCompleteListView) {
-                ((AutoCompleteListView) autoCompleteListView).hideHeader();
-            }
         }
 
         return false;
@@ -180,6 +174,10 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
                 if (autoCompleteListView == null) {
                     return;
+                }
+
+                if (autoCompleteListView instanceof AutoCompleteListView) {
+                    ((AutoCompleteListView) autoCompleteListView).hideHeader();
                 }
 
                 final HeaderViewListAdapter headerViewListAdapter =
@@ -204,6 +202,10 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     public void loadSavedSearches() {
         if (autoCompleteListView == null || autoCompleteListView.getAdapter() == null) {
             return;
+        }
+
+        if (autoCompleteListView instanceof AutoCompleteListView) {
+            ((AutoCompleteListView) autoCompleteListView).showHeader();
         }
 
         final HeaderViewListAdapter headerViewListAdapter =
