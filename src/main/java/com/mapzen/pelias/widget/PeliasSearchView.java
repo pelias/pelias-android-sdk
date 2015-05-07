@@ -3,6 +3,7 @@ package com.mapzen.pelias.widget;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
+import com.mapzen.pelias.gson.Feature;
 import com.mapzen.pelias.gson.Result;
 
 import android.content.Context;
@@ -14,13 +15,16 @@ import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.HeaderViewListAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
 
@@ -127,8 +131,52 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     }
 
     @Override
-    public boolean onQueryTextChange(String newText) {
+    public boolean onQueryTextChange(String text) {
+        if (text.length() < 3) {
+            loadSavedSearches();
+            if (autoCompleteListView instanceof AutoCompleteListView) {
+                ((AutoCompleteListView) autoCompleteListView).showHeader();
+            }
+        } else {
+            fetchAutoCompleteSuggestions(text);
+            if (autoCompleteListView instanceof AutoCompleteListView) {
+                ((AutoCompleteListView) autoCompleteListView).hideHeader();
+            }
+        }
+
         return false;
+    }
+
+    private void fetchAutoCompleteSuggestions(String text) {
+        if (pelias == null) {
+            return;
+        }
+
+        pelias.suggest(text, new Callback<Result>() {
+            @Override public void success(Result result, Response response) {
+                final ArrayList<String> terms = new ArrayList<>();
+                final List<Feature> features = result.getFeatures();
+                for (Feature feature : features) {
+                    terms.add(feature.getProperties().getText());
+                }
+
+                if (autoCompleteListView == null) {
+                    return;
+                }
+
+                final HeaderViewListAdapter headerViewListAdapter =
+                        (HeaderViewListAdapter) autoCompleteListView.getAdapter();
+                final AutoCompleteAdapter adapter =
+                        (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
+                adapter.clear();
+                adapter.addAll(terms);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override public void failure(RetrofitError error) {
+                Log.e(TAG, "Unable to fetch autocomplete results", error);
+            }
+        });
     }
 
     public void setSavedSearch(SavedSearch savedSearch) {
