@@ -72,11 +72,7 @@ public class SimpleFeature implements Parcelable {
 
     @Override
     public String toString() {
-        return "'" + getProperty(TEXT) + "'[" + getLat() + ", " + getLon() + "]";
-    }
-
-    public String getFullLocationString() {
-        return " " + getProperty(TEXT) + " [" + getLat() + ", " + getLon() + "]";
+        return getSingleLine();
     }
 
     @Override
