@@ -3,68 +3,118 @@ buildscript {
     mavenCentral()
     mavenLocal()
   }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:1.1.3'
+    classpath 'com.github.dcendents:android-maven-plugin:1.2'
+  }
 }
 
-apply plugin: 'java'
-apply plugin: 'java-library-distribution'
-apply plugin: 'maven'
-apply plugin: 'signing'
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.mapzen.android'
 version = '0.4-SNAPSHOT'
 
-defaultTasks = ['clean', 'test']
+defaultTasks = ['clean', 'assembleDebug', 'copyTask', 'testDebug', 'install']
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = 'javadoc'
-  from 'build/docs/javadoc'
+task copyTask(type: Copy) {
+  println "Copying com/mapzen/pelias/R.java to android/support/v7/appcompat/R.java"
+  from 'build/generated/source/r/debug/com/mapzen/pelias'
+  into 'build/generated/source/r/debug/android/support/v7/appcompat'
+  include 'R.java'
+  filter { line -> line.contains('package com.mapzen.pelias;') ? 'package android.support.v7.appcompat;' : line }
 }
 
-task sourcesJar(type: Jar) {
-  from sourceSets.main.allSource
-  classifier = 'sources'
+android {
+  compileSdkVersion 21
+  buildToolsVersion "22.0.1"
+
+  defaultConfig {
+    minSdkVersion 15
+    targetSdkVersion 21
+    versionCode 1
+    versionName version
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+  sourceSets {
+    test {
+      java.srcDir file('src/test/java')
+      java.srcDir file('build/generated/source/r/debug')
+    }
+  }
 }
 
-artifacts {
-  archives jar
-  archives javadocJar
-  archives sourcesJar
+tasks.withType(Test) {
+  testLogging {
+    exceptionFormat "full"
+    events "started", "skipped", "passed", "failed"
+    showStandardStreams true
+  }
 }
 
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//  classifier = 'javadoc'
+//  from 'build/docs/javadoc'
+//}
+
+//task sourcesJar(type: Jar) {
+//  from sourceSets.main.allSource
+//  classifier = 'sources'
+//}
+
+//artifacts {
+//  archives jar
+//  archives javadocJar
+//  archives sourcesJar
+//}
 
 repositories {
+  jcenter()
   maven { url 'http://repo.maven.apache.org/maven2' }
 }
 
 dependencies {
+  compile 'com.android.support:appcompat-v7:22.1.0'
+  compile 'com.android.support:support-v4:22.1.0'
   compile 'com.squareup.okhttp:okhttp:1.5.2'
   compile 'com.squareup.retrofit:retrofit:1.5.0'
   compile 'commons-lang:commons-lang:2.2'
-  testCompile 'junit:junit:4.10'
+  compile 'javax.annotation:javax.annotation-api:1.2'
+
+  testCompile 'junit:junit:4.12'
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
   testCompile 'com.squareup.okhttp:mockwebserver:1.5.2'
   testCompile 'org.mockito:mockito-all:1.9.5'
+  testCompile('org.robolectric:robolectric:3.0-rc2') {
+    exclude group: 'commons-logging', module: 'commons-logging'
+    exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+  }
 }
 
-def defaultEncoding = 'UTF-8'
+//def defaultEncoding = 'UTF-8'
 
-compileJava {
-  options.encoding = defaultEncoding
-}
+//compileJava {
+//  options.encoding = defaultEncoding
+//}
 
-compileTestJava {
-  options.encoding = defaultEncoding
-}
+//compileTestJava {
+//  options.encoding = defaultEncoding
+//}
 
-javadoc {
-  options.encoding = defaultEncoding
-}
+//javadoc {
+//  options.encoding = defaultEncoding
+//}
 
-if (version.contains("SNAPSHOT")) {
-  sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-} else {
-  sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-}
+//if (version.contains("SNAPSHOT")) {
+//  sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+//} else {
+//  sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+//}
 
 configurations {
   provided
@@ -80,61 +130,61 @@ if (project.hasProperty('signing.keyId')) {
   }
 }
 
-if (!project.hasProperty('sonatypeUsername')) {
-    sonatypeUsername = ""
-}
+//if (!project.hasProperty('sonatypeUsername')) {
+//    sonatypeUsername = ""
+//}
+//
+//if (!project.hasProperty('sonatypePassword')) {
+//    sonatypePassword = ""
+//}
 
-if (!project.hasProperty('sonatypePassword')) {
-    sonatypePassword = ""
-}
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: sonatypeRepositoryUrl) {
-        authentication(userName: sonatypeUsername, password: sonatypePassword)
-      }
-
-      pom.project {
-        name 'Pelias Android SDK'
-        packaging 'jar'
-        description 'Android SDK for Pelias'
-        url 'http://github.com/mapzen/pelias-android-sdk'
-
-        scm {
-          url 'http://github.com/mapzen/pelias-android-sdk'
-          connection 'scm:git:git://github.com/mapzen/pelias-android-sdk.git'
-          developerConnection 'scm:git:ssh://git@github.com/mapzen/pelias-android-sdk.git'
-        }
-
-        licenses {
-          license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-          }
-        }
-
-        developers {
-          developer {
-            id 'baldur'
-            name 'Baldur Gudbjornsson'
-            email 'baldur@mapzen.com'
-          }
-
-          developer {
-            id 'ecgreb'
-            name 'Chuck Greb'
-            email 'chuck@mapzen.com'
-          }
-        }
-
-        organization {
-          name 'Mapzen'
-          url 'http://mapzen.com'
-        }
-      }
-    }
-  }
-}
+//uploadArchives {
+//  repositories {
+//    mavenDeployer {
+//      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+//
+//      repository(url: sonatypeRepositoryUrl) {
+//        authentication(userName: sonatypeUsername, password: sonatypePassword)
+//      }
+//
+//      pom.project {
+//        name 'Pelias Android SDK'
+//        packaging 'jar'
+//        description 'Android SDK for Pelias'
+//        url 'http://github.com/mapzen/pelias-android-sdk'
+//
+//        scm {
+//          url 'http://github.com/mapzen/pelias-android-sdk'
+//          connection 'scm:git:git://github.com/mapzen/pelias-android-sdk.git'
+//          developerConnection 'scm:git:ssh://git@github.com/mapzen/pelias-android-sdk.git'
+//        }
+//
+//        licenses {
+//          license {
+//            name 'The Apache Software License, Version 2.0'
+//            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//          }
+//        }
+//
+//        developers {
+//          developer {
+//            id 'baldur'
+//            name 'Baldur Gudbjornsson'
+//            email 'baldur@mapzen.com'
+//          }
+//
+//          developer {
+//            id 'ecgreb'
+//            name 'Chuck Greb'
+//            email 'chuck@mapzen.com'
+//          }
+//        }
+//
+//        organization {
+//          name 'Mapzen'
+//          url 'http://mapzen.com'
+//        }
+//      }
+//    }
+//  }
+//}
