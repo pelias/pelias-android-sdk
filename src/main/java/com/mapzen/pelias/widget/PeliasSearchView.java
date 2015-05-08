@@ -150,7 +150,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     @Override
     public boolean onQueryTextChange(String text) {
-        if (text.length() < 3) {
+        if (text.isEmpty()) {
+            return false;
+        } else if (text.length() < 3) {
             loadSavedSearches();
         } else {
             fetchAutoCompleteSuggestions(text);
