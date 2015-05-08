@@ -107,6 +107,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                     if (callback != null) {
                         callback.success(result, null);
                     }
+                    savedSearch.store(item.getText(), item.getSimpleFeature().toParcel());
                 }
             }
         });
