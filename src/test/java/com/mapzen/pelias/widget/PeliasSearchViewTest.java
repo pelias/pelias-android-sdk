@@ -176,6 +176,11 @@ public class PeliasSearchViewTest {
 
         }
 
+        @Override public void getReverse(@Query("lat") String lat,  @Query("lon") String lon,
+                Callback<Result> callback) {
+            callback.success(new Result(), null);
+        }
+
         @Override public void getDoc(@Query("id")String typeAndId, Callback<Result> callback) {
             callback.success(new Result(), null);
         }

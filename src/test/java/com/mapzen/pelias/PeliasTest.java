@@ -71,6 +71,13 @@ public class PeliasTest {
     }
 
     @Test
+    public void reverse_getReverseGeocodingWithLocationProvider() throws Exception {
+        peliasWithMock.setLocationProvider(new TestLocationProvider());
+        peliasWithMock.reverse("30.0", "30.0", callback);
+        verify(mock).getReverse(eq("30.0"), eq("30.0"),cb.capture());
+    }
+
+    @Test
     public void setEndpoint_shouldChangeServiceEndpoint() throws Exception {
         final MockWebServer server = new MockWebServer();
         MockResponse response = new MockResponse();
