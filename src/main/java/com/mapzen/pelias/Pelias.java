@@ -60,6 +60,11 @@ public class Pelias {
         service.getSearch(query, locationProvider.getLat(), locationProvider.getLon(), callback);
     }
 
+
+    public void reverse(String lat, String lon, Callback<Result> callback) {
+        service.getReverse(lat, lon, callback);
+    }
+
     public void doc(String type, String id, Callback<Result> callback) {
         service.getDoc(type + ":" + id, callback);
     }
