@@ -14,3 +14,9 @@ dependencies:
 test:
   override:
     - ./gradlew
+
+deployment:
+  master:
+    branch: master
+    commands:
+      - ./gradlew uploadArchives -PsonatypeUsername=$SONATYPE_NEXUS_SNAPSHOTS_USERNAME -PsonatypePassword=$SONATYPE_NEXUS_SNAPSHOTS_PASSWORD
