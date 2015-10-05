@@ -25,6 +25,7 @@ public class PeliasTest {
     Pelias peliasWithMock;
     TestCallback callback;
     PeliasService mock;
+    String apiKey = "";
 
     @Captor
     @SuppressWarnings("unused")
@@ -41,40 +42,40 @@ public class PeliasTest {
     @Test
     public void doc_getDocument() throws Exception {
         peliasWithMock.doc("osmnode", "15", callback);
-        verify(mock).getDoc(eq("osmnode:15"), cb.capture());
+        verify(mock).getDoc(eq("osmnode:15"), eq(apiKey), cb.capture());
     }
 
     @Test
     public void search_getSearch() throws Exception {
-        peliasWithMock.search("test", "1", "2", callback);
-        verify(mock).getSearch(eq("test"), eq("1"), eq("2"), cb.capture());
+        peliasWithMock.search("test", "1", "2", "3", "4", "5", "6", callback);
+        verify(mock).getSearch(eq("test"), eq("1"), eq("2"), eq("3"), eq("4"), eq("5"), eq("6"), eq(apiKey), cb.capture());
     }
 
     @Test
     public void search_getSearchWithLocationProvider() throws Exception {
         peliasWithMock.setLocationProvider(new TestLocationProvider());
-        peliasWithMock.search("test", callback);
-        verify(mock).getSearch(eq("test"), eq("1.0"), eq("2.0"), cb.capture());
+        peliasWithMock.search("test","1", "2", "3", "4", callback);
+        verify(mock).getSearch(eq("test"), eq("1.0"), eq("2.0"), eq("1"), eq("2"), eq("3"), eq("4"), eq(apiKey), cb.capture());
     }
 
     @Test
     public void suggest_getSuggest() throws Exception {
         peliasWithMock.suggest("test", "1", "2", callback);
-        verify(mock).getSuggest(eq("test"), eq("1"), eq("2"), cb.capture());
+        verify(mock).getSuggest(eq("test"), eq("1"), eq("2"), eq(apiKey), cb.capture());
     }
 
     @Test
     public void suggest_getSuggestWithLocationProvider() throws Exception {
         peliasWithMock.setLocationProvider(new TestLocationProvider());
         peliasWithMock.suggest("test", callback);
-        verify(mock).getSuggest(eq("test"), eq("1.0"), eq("2.0"), cb.capture());
+        verify(mock).getSuggest(eq("test"), eq("1.0"), eq("2.0"),eq(apiKey), cb.capture());
     }
 
     @Test
     public void reverse_getReverseGeocodingWithLocationProvider() throws Exception {
         peliasWithMock.setLocationProvider(new TestLocationProvider());
         peliasWithMock.reverse("30.0", "30.0", callback);
-        verify(mock).getReverse(eq("30.0"), eq("30.0"),cb.capture());
+        verify(mock).getReverse(eq("30.0"), eq("30.0"), eq(apiKey), cb.capture());
     }
 
     @Test
@@ -86,7 +87,7 @@ public class PeliasTest {
         Pelias pelias = Pelias.getPeliasWithEndpoint(server.getUrl("/").toString());
         pelias.suggest("test", "1", "2", callback);
         RecordedRequest request = server.takeRequest();
-        assertThat(request.getPath()).contains("/suggest");
+        assertThat(request.getPath()).contains("/autocomplete");
         server.shutdown();
     }
 

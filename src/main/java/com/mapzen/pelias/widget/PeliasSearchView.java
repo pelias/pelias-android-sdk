@@ -1,5 +1,6 @@
 package com.mapzen.pelias.widget;
 
+import com.mapzen.pelias.BoundingBox;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
@@ -60,9 +61,11 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private Pelias pelias;
     private Callback<Result> callback;
     private OnSubmitListener onSubmitListener;
+    private BoundingBox boundingBox;
 
     public PeliasSearchView(Context context) {
         super(context);
+        boundingBox = new BoundingBox(0.0, 0.0, 0.0, 0.0);
         disableDefaultSoftKeyboardBehaviour();
         setOnQueryTextListener(this);
     }
@@ -131,10 +134,14 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         }
     }
 
+    public void setBoundingBox(BoundingBox bbox) {
+      boundingBox = bbox;
+    }
+
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (pelias != null) {
-            pelias.search(query, callback);
+            pelias.search(query,boundingBox,callback);
         }
 
         if (savedSearch != null) {

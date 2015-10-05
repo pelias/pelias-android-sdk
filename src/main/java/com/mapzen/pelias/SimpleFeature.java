@@ -56,18 +56,18 @@ public class SimpleFeature implements Parcelable {
 
     public static SimpleFeature fromFeature(Feature feature) {
         SimpleFeature simpleFeature = new SimpleFeature();
-        simpleFeature.setProperty(TEXT, feature.getProperties().getText());
+        simpleFeature.setProperty(TEXT, feature.getProperties().getLabel());
         simpleFeature.setProperty(TYPE, feature.getProperties().getType());
         simpleFeature.setProperty(ID, feature.getProperties().getId());
-        simpleFeature.setProperty(ADMIN1, feature.getProperties().getAdmin1());
-        simpleFeature.setProperty(ADMIN1_ABBR, feature.getProperties().getAdmin1Abbr());
+        simpleFeature.setProperty(ADMIN1, feature.getProperties().getRegion());
+        simpleFeature.setProperty(ADMIN1_ABBR, feature.getProperties().getRegion_a());
         simpleFeature.setProperty(LOCAL_ADMIN, feature.getProperties().getLocalAdmin());
-        simpleFeature.setProperty(NEIGHBORHOOD, feature.getProperties().getNeighborhood());
+        simpleFeature.setProperty(NEIGHBORHOOD, feature.getProperties().getNeighbourhood());
         simpleFeature.setProperty(LOCALITY, feature.getProperties().getLocality());
         simpleFeature.setProperty(ADMIN2, feature.getProperties().getAdmin2());
         simpleFeature.setLon(feature.getGeometry().getCoordinates().get(0));
         simpleFeature.setLat(feature.getGeometry().getCoordinates().get(1));
-        simpleFeature.setHint(feature.getProperties().getText());
+        simpleFeature.setHint(feature.getProperties().getLabel());
         simpleFeature.feature = feature;
         return simpleFeature;
     }

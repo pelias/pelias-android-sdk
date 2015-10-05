@@ -7,15 +7,28 @@ import retrofit.http.GET;
 import retrofit.http.Query;
 
 public interface PeliasService {
-    @GET("/suggest")
-    void getSuggest(@Query("input") String query, @Query("lat") String lat, @Query("lon") String lon, Callback<Result> callback);
+    @GET("/autocomplete")
+    void getSuggest(@Query("text") String query,
+                    @Query("focus.point.lat") String lat,
+                    @Query("focus.point.lon") String lon,
+                    @Query("api_key") String key, Callback<Result> callback);
 
     @GET("/search")
-    void getSearch(@Query("input") String query, @Query("lat") String lat, @Query("lon") String lon, Callback<Result> callback);
+    void getSearch(@Query("text") String query,
+                   @Query("focus.point.lat") String lat,
+                   @Query("focus.point.lon") String lon,
+                   @Query("boundary.rect.min_lon") String minLon,
+                   @Query("boundary.rect.min_lat") String minLat,
+                   @Query("boundary.rect.max_lon") String maxLon,
+                   @Query("boundary.rect.max_lat") String maxLat,
+                   @Query("api_key") String key, Callback<Result> callback);
 
     @GET("/reverse")
-    void getReverse(@Query("lat") String lat, @Query("lon") String lon, Callback<Result> callback);
+    void getReverse(@Query("point.lat") String lat,
+                    @Query("point.lon") String lon,
+                    @Query("api_key") String key, Callback<Result> callback);
 
-    @GET("/doc")
-    void getDoc(@Query("id") String typeAndId, Callback<Result> callback);
+    @GET("/place")
+    void getDoc(@Query("id") String typeAndId,
+                @Query("api_key") String key, Callback<Result> callback);
 }

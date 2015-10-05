@@ -9,16 +9,16 @@ import javax.annotation.Generated;
 public class Properties {
 
     @Expose
-    private String admin0;
+    private String country;
     @Expose
-    private String admin1;
+    private String region;
     @SerializedName("admin1_abbr")
     @Expose
-    private String admin1Abbr;
+    private String region_a;
     @Expose
     private String admin2;
     @Expose
-    private String alpha3;
+    private String country_a;
     @SerializedName("local_admin")
     @Expose
     private String localAdmin;
@@ -27,36 +27,36 @@ public class Properties {
     @Expose
     private String name;
     @Expose
-    private String neighborhood;
+    private String neighbourhood;
     @Expose
-    private String text;
+    private String label;
     @Expose
     private String type;
     @Expose
     private String id;
 
-    public String getAdmin0() {
-        return admin0;
+    public String getCountry() {
+        return country;
     }
 
-    public void setAdmin0(String admin0) {
-        this.admin0 = admin0;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
-    public String getAdmin1() {
-        return admin1;
+    public String getRegion() {
+        return region;
     }
 
-    public void setAdmin1(String admin1) {
-        this.admin1 = admin1;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
-    public String getAdmin1Abbr() {
-        return admin1Abbr;
+    public String getRegion_a() {
+        return region_a;
     }
 
-    public void setAdmin1Abbr(String admin1Abbr) {
-        this.admin1Abbr = admin1Abbr;
+    public void setRegion_a(String region_a) {
+        this.region_a = region_a;
     }
 
     public String getAdmin2() {
@@ -67,12 +67,12 @@ public class Properties {
         this.admin2 = admin2;
     }
 
-    public String getAlpha3() {
-        return alpha3;
+    public String getCountry_a() {
+        return country_a;
     }
 
-    public void setAlpha3(String alpha3) {
-        this.alpha3 = alpha3;
+    public void setCountry_a(String country_a) {
+        this.country_a = country_a;
     }
 
     public String getLocalAdmin() {
@@ -99,20 +99,20 @@ public class Properties {
         this.name = name;
     }
 
-    public String getNeighborhood() {
-        return neighborhood;
+    public String getNeighbourhood() {
+        return neighbourhood;
     }
 
-    public void setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
+    public void setNeighbourhood(String neighbourhood) {
+        this.neighbourhood = neighbourhood;
     }
 
-    public String getText() {
-        return text;
+    public String getLabel() {
+        return label;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public String getType() {
