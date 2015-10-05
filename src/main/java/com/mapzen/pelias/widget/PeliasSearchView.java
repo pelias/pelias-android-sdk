@@ -60,6 +60,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private Pelias pelias;
     private Callback<Result> callback;
     private OnSubmitListener onSubmitListener;
+    private String minLat = "", minLon = "", maxLat = "", maxLon = "";
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -131,10 +132,17 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         }
     }
 
+    public void setBoundingBox(String minLat, String minLon, String maxLat, String maxLon) {
+        this.minLat = minLat;
+        this.minLon = minLon;
+        this.maxLat = maxLat;
+        this.maxLon = maxLon;
+    }
+
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (pelias != null) {
-            pelias.search(query, callback);
+            pelias.search(query, minLon, minLat, maxLon, maxLat,callback);
         }
 
         if (savedSearch != null) {
