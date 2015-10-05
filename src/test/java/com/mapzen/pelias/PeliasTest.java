@@ -47,15 +47,15 @@ public class PeliasTest {
 
     @Test
     public void search_getSearch() throws Exception {
-        peliasWithMock.search("test", "1", "2", "1", "1", "1", "1", callback);
-        verify(mock).getSearch(eq("test"), eq("1"), eq("2"), eq("1"), eq("1"), eq("1"), eq("1"), eq(apiKey), cb.capture());
+        peliasWithMock.search("test", "1", "2", "3", "4", "5", "6", callback);
+        verify(mock).getSearch(eq("test"), eq("1"), eq("2"), eq("3"), eq("4"), eq("5"), eq("6"), eq(apiKey), cb.capture());
     }
 
     @Test
     public void search_getSearchWithLocationProvider() throws Exception {
         peliasWithMock.setLocationProvider(new TestLocationProvider());
-        peliasWithMock.search("test","1", "1", "1", "1", callback);
-        verify(mock).getSearch(eq("test"), eq("1.0"), eq("2.0"), eq("1"), eq("1"), eq("1"), eq("1"), eq(apiKey), cb.capture());
+        peliasWithMock.search("test","1", "2", "3", "4", callback);
+        verify(mock).getSearch(eq("test"), eq("1.0"), eq("2.0"), eq("1"), eq("2"), eq("3"), eq("4"), eq(apiKey), cb.capture());
     }
 
     @Test

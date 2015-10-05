@@ -53,23 +53,31 @@ public class Pelias {
         service.getSuggest(query, locationProvider.getLat(), locationProvider.getLon(),apiKey,  callback);
     }
 
-    public void search(String query, String lat, String lon, String minLon,
-                       String minLat,
-                       String maxLon,
-                       String maxLat, Callback<Result> callback) {
+    public void search(String query, String lat, String lon, BoundingBox box,
+                       Callback<Result> callback) {
+        search(query, lat, lon, box.minLon, box.minLat,
+                box.maxLon, box.maxLat, callback);
+    }
+
+    public void search(String query, BoundingBox box,
+                       Callback<Result> callback) {
+        search(query, box.minLon, box.minLat, box.maxLon, box.maxLat, callback);
+    }
+
+    public void search(String query, String lat, String lon, String minLon, String minLat,
+                       String maxLon, String maxLat, Callback<Result> callback) {
         service.getSearch(query, lat, lon, minLon, minLat, maxLon, maxLat, apiKey, callback);
     }
 
-    public void search(String query,String minLon,
-                       String minLat,
-                       String maxLon,
+    public void search(String query,String minLon, String minLat, String maxLon,
                        String maxLat, Callback<Result> callback) {
-        service.getSearch(query, locationProvider.getLat(), locationProvider.getLon(), minLon, minLat, maxLon, maxLat, apiKey, callback);
+        service.getSearch(query, locationProvider.getLat(), locationProvider.getLon(),
+                minLon, minLat, maxLon, maxLat, apiKey, callback);
     }
 
 
     public void reverse(String lat, String lon, Callback<Result> callback) {
-        service.getReverse(lat, lon, apiKey,  callback);
+        service.getReverse(lat, lon, apiKey, callback);
     }
 
     public void doc(String type, String id, Callback<Result> callback) {
