@@ -17,10 +17,10 @@ public interface PeliasService {
     void getSearch(@Query("text") String query,
                    @Query("focus.point.lat") String lat,
                    @Query("focus.point.lon") String lon,
-                   @Query("boundary.rect.min_lon") String minLon,
-                   @Query("boundary.rect.min_lat") String minLat,
-                   @Query("boundary.rect.max_lon") String maxLon,
-                   @Query("boundary.rect.max_lat") String maxLat,
+                   @Query("focus.viewport.min_lon") String minLon,
+                   @Query("focus.viewport.min_lat") String minLat,
+                   @Query("focus.viewport.max_lon") String maxLon,
+                   @Query("focus.viewport.max_lat") String maxLat,
                    @Query("api_key") String key, Callback<Result> callback);
 
     @GET("/reverse")
