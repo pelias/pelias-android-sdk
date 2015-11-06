@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
@@ -100,11 +101,13 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
                 if (item.getSimpleFeature() == null) {
                     setQuery(item.getText(), true);
+                    resetCursorPosition();
                 } else {
                     final Result result = new Result();
                     final ArrayList<Feature> features = new ArrayList<>(1);
                     clearFocus();
                     setQuery(item.getText(), false);
+                    resetCursorPosition();
                     features.add(item.getSimpleFeature().getFeature());
                     result.setFeatures(features);
                     if (callback != null) {
@@ -153,6 +156,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         }
 
         clearFocus();
+        resetCursorPosition();
         return false;
     }
 
@@ -277,5 +281,12 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     public interface OnSubmitListener {
         public void onSubmit();
+    }
+
+    private void resetCursorPosition() {
+        EditText editText = (EditText) findViewById(R.id.search_src_text);
+        if (editText != null) {
+            editText.setSelection(0);
+        }
     }
 }

@@ -12,7 +12,7 @@ public class AutoCompleteItem {
     }
 
     public AutoCompleteItem(SimpleFeature simpleFeature) {
-        this.text = simpleFeature.getSingleLine();
+        this.text = simpleFeature.getTitle();
         this.simpleFeature = simpleFeature;
     }
 
