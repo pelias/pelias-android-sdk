@@ -8,27 +8,32 @@ import retrofit.http.Query;
 
 public interface PeliasService {
     @GET("/autocomplete")
-    void getSuggest(@Query("text") String query,
-                    @Query("focus.point.lat") String lat,
-                    @Query("focus.point.lon") String lon,
-                    @Query("api_key") String key, Callback<Result> callback);
+    void getSuggest(
+            @Query("text") String query,
+            @Query("focus.point.lat") double lat,
+            @Query("focus.point.lon") double lon,
+            @Query("api_key") String key,
+            Callback<Result> callback);
 
     @GET("/search")
-    void getSearch(@Query("text") String query,
-                   @Query("focus.point.lat") String lat,
-                   @Query("focus.point.lon") String lon,
-                   @Query("focus.viewport.min_lon") String minLon,
-                   @Query("focus.viewport.min_lat") String minLat,
-                   @Query("focus.viewport.max_lon") String maxLon,
-                   @Query("focus.viewport.max_lat") String maxLat,
-                   @Query("api_key") String key, Callback<Result> callback);
+    void getSearch(
+            @Query("text") String query,
+            @Query("focus.viewport.min_lat") double minLat,
+            @Query("focus.viewport.min_lon") double minLon,
+            @Query("focus.viewport.max_lat") double maxLat,
+            @Query("focus.viewport.max_lon") double maxLon,
+            @Query("api_key") String key,
+            Callback<Result> callback);
 
     @GET("/reverse")
-    void getReverse(@Query("point.lat") String lat,
-                    @Query("point.lon") String lon,
-                    @Query("api_key") String key, Callback<Result> callback);
+    void getReverse(
+            @Query("point.lat") double lat,
+            @Query("point.lon") double lon,
+            @Query("api_key") String key,
+            Callback<Result> callback);
 
     @GET("/place")
     void getDoc(@Query("id") String typeAndId,
-                @Query("api_key") String key, Callback<Result> callback);
+            @Query("api_key") String key,
+            Callback<Result> callback);
 }

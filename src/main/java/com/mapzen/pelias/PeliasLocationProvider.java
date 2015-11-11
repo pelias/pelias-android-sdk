@@ -1,6 +1,7 @@
 package com.mapzen.pelias;
 
 public interface PeliasLocationProvider {
-    public String getLat();
-    public String getLon();
+    public double getLat();
+    public double getLon();
+    public BoundingBox getBoundingBox();
 }
