@@ -166,26 +166,24 @@ public class PeliasSearchViewTest {
 
     private class TestPeliasService implements PeliasService {
         @Override public void getSuggest(@Query("text") String query,
-                                         @Query("focus.point.lat") String lat,
-                                         @Query("focus.point.lon") String lon,
+                                         @Query("focus.point.lat") double lat,
+                                         @Query("focus.point.lon") double lon,
                                          @Query("api_key") String key, Callback<Result> callback) {
             callback.success(new Result(), null);
         }
 
         @Override public void getSearch(@Query("text") String query,
-                                        @Query("focus.point.lat") String lat,
-                                        @Query("focus.point.lon") String lon,
-                                        @Query("focus.viewport.min_lon") String minLon,
-                                        @Query("focus.viewport.min_lat") String minLat,
-                                        @Query("focus.viewport.max_lon") String maxLon,
-                                        @Query("focus.viewport.max_lat") String maxLat,
+                                        @Query("focus.viewport.min_lon") double minLon,
+                                        @Query("focus.viewport.min_lat") double minLat,
+                                        @Query("focus.viewport.max_lon") double maxLon,
+                                        @Query("focus.viewport.max_lat") double maxLat,
                                         @Query("api_key") String key, Callback<Result> callback) {
             callback.success(new Result(), null);
 
         }
 
-        @Override public void getReverse(@Query("point.lat") String lat,
-                                         @Query("point.lon") String lon,
+        @Override public void getReverse(@Query("point.lat") double lat,
+                                         @Query("point.lon") double lon,
                                          @Query("api_key") String key, Callback<Result> callback) {
             callback.success(new Result(), null);
         }

@@ -27,6 +27,7 @@ public class Pelias {
     private void initService(String serviceEndpoint) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(serviceEndpoint)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
         this.service = restAdapter.create(PeliasService.class);
     }
@@ -45,43 +46,24 @@ public class Pelias {
         return instance;
     }
 
-    public void suggest(String query, String lat, String lon, Callback<Result> callback) {
-        service.getSuggest(query, lat, lon, apiKey,  callback);
-    }
-
     public void suggest(String query, Callback<Result> callback) {
-        service.getSuggest(query, locationProvider.getLat(), locationProvider.getLon(),apiKey,  callback);
+        suggest(query, locationProvider.getLat(), locationProvider.getLon(), callback);
     }
 
-    public void search(String query, String lat, String lon, BoundingBox box,
-                       Callback<Result> callback) {
-        search(query, lat, lon, box.minLon, box.minLat,
-                box.maxLon, box.maxLat, callback);
+    public void suggest(String query, double lat, double lon, Callback<Result> callback) {
+        service.getSuggest(query, lat, lon, apiKey, callback);
     }
 
-    public void search(String query, BoundingBox box,
-                       Callback<Result> callback) {
-        search(query, box.minLon, box.minLat, box.maxLon, box.maxLat, callback);
+    public void search(String query, Callback<Result> callback) {
+        search(query, locationProvider.getBoundingBox(), callback);
     }
 
-    public void search(String query, String lat, String lon, String minLon, String minLat,
-                       String maxLon, String maxLat, Callback<Result> callback) {
-        service.getSearch(query, lat, lon, minLon, minLat, maxLon, maxLat, apiKey, callback);
+    public void search(String query, BoundingBox box, Callback<Result> callback) {
+        service.getSearch(query, box.minLat, box.minLon, box.maxLat, box.maxLon, apiKey, callback);
     }
 
-    public void search(String query,String minLon, String minLat, String maxLon,
-                       String maxLat, Callback<Result> callback) {
-        service.getSearch(query, locationProvider.getLat(), locationProvider.getLon(),
-                minLon, minLat, maxLon, maxLat, apiKey, callback);
-    }
-
-
-    public void reverse(String lat, String lon, Callback<Result> callback) {
+    public void reverse(double lat, double lon, Callback<Result> callback) {
         service.getReverse(lat, lon, apiKey, callback);
-    }
-
-    public void doc(String type, String id, Callback<Result> callback) {
-        service.getDoc(type + ":" + id, apiKey,  callback);
     }
 
     public void setLocationProvider(PeliasLocationProvider locationProvider) {
