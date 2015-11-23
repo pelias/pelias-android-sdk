@@ -57,6 +57,12 @@ public class PeliasTest {
     }
 
     @Test
+    public void search_getSearchWithFocusPoint() throws Exception {
+        peliasWithMock.search("test", 1.0, 2.0, callback);
+        verify(mock).getSearch(eq("test"), eq(1.0), eq(2.0), eq(apiKey), cb.capture());
+    }
+
+    @Test
     public void suggest_getSuggest() throws Exception {
         peliasWithMock.suggest("test", 1.0, 2.0, callback);
         verify(mock).getSuggest(eq("test"), eq(1.0), eq(2.0), eq(apiKey), cb.capture());

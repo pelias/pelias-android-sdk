@@ -25,6 +25,14 @@ public interface PeliasService {
             @Query("api_key") String key,
             Callback<Result> callback);
 
+    @GET("/search")
+    void getSearch(
+            @Query("text") String query,
+            @Query("focus.point.lat") double lat,
+            @Query("focus.point.lon") double lon,
+            @Query("api_key") String key,
+            Callback<Result> callback);
+
     @GET("/reverse")
     void getReverse(
             @Query("point.lat") double lat,
