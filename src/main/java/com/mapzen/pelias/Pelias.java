@@ -62,6 +62,10 @@ public class Pelias {
         service.getSearch(query, box.minLat, box.minLon, box.maxLat, box.maxLon, apiKey, callback);
     }
 
+    public void search(String query, double lat, double lon, Callback<Result> callback) {
+        service.getSearch(query, lat, lon, apiKey, callback);
+    }
+
     public void reverse(double lat, double lon, Callback<Result> callback) {
         service.getReverse(lat, lon, apiKey, callback);
     }
