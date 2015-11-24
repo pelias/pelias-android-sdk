@@ -2,9 +2,11 @@ package com.mapzen.pelias.widget;
 
 import com.mapzen.pelias.SimpleFeature;
 
+import android.os.Parcel;
+
 public class AutoCompleteItem {
-    private String text;
-    private SimpleFeature simpleFeature;
+    private final String text;
+    private final SimpleFeature simpleFeature;
 
     public AutoCompleteItem(String text) {
         this.text = text;
@@ -14,6 +16,11 @@ public class AutoCompleteItem {
     public AutoCompleteItem(SimpleFeature simpleFeature) {
         this.text = simpleFeature.getTitle();
         this.simpleFeature = simpleFeature;
+    }
+
+    public AutoCompleteItem(Parcel parcel) {
+        this.simpleFeature = SimpleFeature.readFromParcel(parcel);
+        this.text = simpleFeature.getTitle();
     }
 
     public String getText() {

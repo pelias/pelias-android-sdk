@@ -1,5 +1,12 @@
 package com.mapzen.pelias.widget;
 
+import com.mapzen.pelias.Pelias;
+import com.mapzen.pelias.R;
+import com.mapzen.pelias.SavedSearch;
+import com.mapzen.pelias.SimpleFeature;
+import com.mapzen.pelias.gson.Feature;
+import com.mapzen.pelias.gson.Result;
+
 import android.content.Context;
 import android.os.ResultReceiver;
 import android.support.v7.widget.SearchView;
@@ -11,13 +18,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
-
-import com.mapzen.pelias.Pelias;
-import com.mapzen.pelias.R;
-import com.mapzen.pelias.SavedSearch;
-import com.mapzen.pelias.SimpleFeature;
-import com.mapzen.pelias.gson.Feature;
-import com.mapzen.pelias.gson.Result;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -219,14 +219,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                 (HeaderViewListAdapter) autoCompleteListView.getAdapter();
         final AutoCompleteAdapter adapter =
                 (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
-        final List<String> terms = savedSearch.getTerms();
-        final ArrayList<AutoCompleteItem> items = new ArrayList<>();
-        for (String term : terms) {
-            items.add(new AutoCompleteItem(term));
-        }
 
         adapter.clear();
-        adapter.addAll(items);
+        adapter.addAll(savedSearch.getItems());
         adapter.notifyDataSetChanged();
     }
 

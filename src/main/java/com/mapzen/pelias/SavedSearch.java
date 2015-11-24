@@ -1,5 +1,7 @@
 package com.mapzen.pelias;
 
+import com.mapzen.pelias.widget.AutoCompleteItem;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,9 +31,11 @@ public final class SavedSearch {
             _ID, SEARCH_TERM
     };
 
+    private LinkedList<Member> store = new LinkedList<>();
+
     public class Member {
         private String term;
-        private Parcel payload = null;
+        private Parcel payload;
 
         public Member(String term, Parcel payload) {
             this.term = term;
@@ -90,8 +94,6 @@ public final class SavedSearch {
             return result;
         }
     }
-
-    private LinkedList<Member> store = new LinkedList<Member>();
 
     public int store(String term, Parcel payload) {
         truncate();
@@ -177,6 +179,9 @@ public final class SavedSearch {
         return cursor;
     }
 
+    /**
+     * Returns a list of saved search terms (text only).
+     */
     public List<String> getTerms() {
         final ArrayList<String> terms = new ArrayList<>();
         for (Member member : store) {
@@ -184,6 +189,24 @@ public final class SavedSearch {
         }
 
         return terms;
+    }
+
+    /**
+     * Returns a list of {@link AutoCompleteItem} objects with optional payload.
+     */
+    public List<AutoCompleteItem> getItems() {
+        final ArrayList<AutoCompleteItem> items = new ArrayList<>();
+        for (Member member : store) {
+            final String term = member.getTerm();
+            final Parcel parcel = member.getPayload();
+            if (parcel != null) {
+                items.add(new AutoCompleteItem(parcel));
+            } else {
+                items.add(new AutoCompleteItem(term));
+            }
+        }
+
+        return items;
     }
 
     private void truncate() {

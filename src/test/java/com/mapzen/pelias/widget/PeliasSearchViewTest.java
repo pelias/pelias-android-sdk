@@ -5,6 +5,8 @@ import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.PeliasService;
 import com.mapzen.pelias.PeliasTest;
 import com.mapzen.pelias.SavedSearch;
+import com.mapzen.pelias.SimpleFeature;
+import com.mapzen.pelias.SimpleFeatureTest;
 import com.mapzen.pelias.gson.Result;
 
 import org.junit.Before;
@@ -15,6 +17,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.app.Activity;
+import android.os.Parcel;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -120,6 +123,28 @@ public class PeliasSearchViewTest {
         peliasSearchView.loadSavedSearches();
         assertThat(adapter.getCount()).isEqualTo(1);
         assertThat(((TextView) adapter.getView(0, null, null)).getText()).isEqualTo("query");
+    }
+
+    @Test
+    public void loadSavedSearches_shouldAddPayloadToAutocompleteListView() throws Exception {
+        final AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+        final AutoCompleteAdapter adapter = new AutoCompleteAdapter(ACTIVITY,
+                android.R.layout.simple_list_item_1);
+        final SavedSearch savedSearch = new SavedSearch();
+        final Parcel payload = Parcel.obtain();
+        final SimpleFeature simpleFeature = SimpleFeatureTest.getTestSimpleFeature();
+
+        simpleFeature.writeToParcel(payload, 0);
+        payload.setDataPosition(0);
+
+        savedSearch.store("Test SimpleFeature", payload);
+        listView.setAdapter(adapter);
+        peliasSearchView.setAutoCompleteListView(listView);
+        peliasSearchView.setSavedSearch(savedSearch);
+        peliasSearchView.loadSavedSearches();
+        assertThat(adapter.getCount()).isEqualTo(1);
+        assertThat(adapter.getItem(0).getText()).isEqualTo("Test SimpleFeature");
+        assertThat(adapter.getItem(0).getSimpleFeature()).isEqualTo(simpleFeature);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.mapzen.pelias;
 
+import com.mapzen.pelias.widget.AutoCompleteItem;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,9 +12,11 @@ import android.database.Cursor;
 import android.os.Parcel;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static com.mapzen.pelias.SavedSearch.MAX_ENTRIES;
 import static com.mapzen.pelias.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeatureTest.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -26,7 +30,7 @@ public class SavedSearchTest {
         savedSearch = new SavedSearch();
         savedSearch.clear();
         payload = Parcel.obtain();
-        SimpleFeatureTest.getTestSimpleFeature().writeToParcel(payload, 0);
+        getTestSimpleFeature().writeToParcel(payload, 0);
         payload.setDataPosition(0);
     }
 
@@ -101,9 +105,9 @@ public class SavedSearchTest {
     }
 
     @Test
-    public void store_shouldUpdateEntriresWithPayload() throws Exception {
+    public void store_shouldUpdateEntriesWithPayload() throws Exception {
         Parcel newPayload = Parcel.obtain();
-        SimpleFeature expectedFeature = SimpleFeatureTest.getTestSimpleFeature();
+        SimpleFeature expectedFeature = getTestSimpleFeature();
         expectedFeature.setProperty(TEXT, "new property");
         expectedFeature.writeToParcel(newPayload, 0);
         newPayload.setDataPosition(0);
@@ -221,6 +225,32 @@ public class SavedSearchTest {
         String serialized = savedSearch.serialize();
         savedSearch.deserialize(serialized);
         assertThat(savedSearch.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void getTerms_shouldReturnTextList() throws Exception {
+        savedSearch.store("term 1");
+        savedSearch.store("term 2");
+        savedSearch.store("term 3");
+        assertThat(savedSearch.getTerms()).hasSize(3);
+        assertThat(savedSearch.getTerms().get(0)).isEqualTo("term 3");
+        assertThat(savedSearch.getTerms().get(1)).isEqualTo("term 2");
+        assertThat(savedSearch.getTerms().get(2)).isEqualTo("term 1");
+    }
+
+    @Test
+    public void getItems_shouldReturnAutoCompleteItemsWithSimpleFeature() throws Exception {
+        savedSearch.store("Test SimpleFeature", payload);
+        savedSearch.store("term 2");
+        savedSearch.store("term 3");
+        List<AutoCompleteItem> items = savedSearch.getItems();
+        assertThat(items).hasSize(3);
+        assertThat(items.get(0).getText()).isEqualTo("term 3");
+        assertThat(items.get(1).getText()).isEqualTo("term 2");
+        assertThat(items.get(2).getText()).isEqualTo("Test SimpleFeature");
+        assertThat(items.get(0).getSimpleFeature()).isEqualTo(null);
+        assertThat(items.get(1).getSimpleFeature()).isEqualTo(null);
+        assertThat(items.get(2).getSimpleFeature()).isEqualTo(getTestSimpleFeature());
     }
 
     private int countTerms(Iterator<SavedSearch.Member> results) {
