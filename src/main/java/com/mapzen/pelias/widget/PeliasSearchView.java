@@ -105,7 +105,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                     clearFocus();
                     setQuery(item.getText(), false);
                     resetCursorPosition();
-                    features.add(item.getSimpleFeature().getFeature());
+                    features.add(item.getSimpleFeature().toFeature());
                     result.setFeatures(features);
                     if (callback != null) {
                         callback.success(result, null);
@@ -129,7 +129,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                     // Do nothing.
                 }
             });
-        } catch (IllegalAccessException | NoSuchFieldException e) {
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "Unable to override default soft keyboard behavior", e);
+        } catch (NoSuchFieldException e) {
             Log.e(TAG, "Unable to override default soft keyboard behavior", e);
         }
     }

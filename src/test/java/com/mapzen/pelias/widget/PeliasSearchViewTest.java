@@ -143,7 +143,7 @@ public class PeliasSearchViewTest {
         peliasSearchView.setSavedSearch(savedSearch);
         peliasSearchView.loadSavedSearches();
         assertThat(adapter.getCount()).isEqualTo(1);
-        assertThat(adapter.getItem(0).getText()).isEqualTo("Test SimpleFeature");
+        assertThat(adapter.getItem(0).getText()).isEqualTo(simpleFeature.label());
         assertThat(adapter.getItem(0).getSimpleFeature()).isEqualTo(simpleFeature);
     }
 
