@@ -5,22 +5,23 @@ import com.mapzen.pelias.SimpleFeature;
 import android.os.Parcel;
 
 public class AutoCompleteItem {
-    private final String text;
     private final SimpleFeature simpleFeature;
+    private final String text;
 
     public AutoCompleteItem(String text) {
-        this.text = text;
         this.simpleFeature = null;
+        this.text = text;
     }
 
     public AutoCompleteItem(SimpleFeature simpleFeature) {
-        this.text = simpleFeature.getTitle();
         this.simpleFeature = simpleFeature;
+        this.text = simpleFeature.label();
     }
 
-    public AutoCompleteItem(Parcel parcel) {
-        this.simpleFeature = SimpleFeature.readFromParcel(parcel);
-        this.text = simpleFeature.getTitle();
+    public AutoCompleteItem(Parcel in) {
+        in.setDataPosition(0);
+        this.simpleFeature = SimpleFeature.readFromParcel(in);
+        this.text = simpleFeature.label();
     }
 
     public String getText() {

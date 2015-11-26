@@ -24,7 +24,7 @@ public class AutoCompleteItemTest {
         parcel.setDataPosition(0);
 
         AutoCompleteItem item = new AutoCompleteItem(parcel);
-        assertThat(item.getText()).isEqualTo("Test SimpleFeature");
+        assertThat(item.getText()).isEqualTo(simpleFeature.label());
         assertThat(item.getSimpleFeature()).isEqualTo(simpleFeature);
     }
 }

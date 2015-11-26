@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.mapzen.pelias.SavedSearch.MAX_ENTRIES;
-import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static com.mapzen.pelias.SimpleFeatureTest.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -56,7 +55,7 @@ public class SavedSearchTest {
         savedSearch.clear();
         savedSearch.deserialize(serialized);
         SimpleFeature feature = SimpleFeature.readFromParcel(savedSearch.get(0).getPayload());
-        assertThat(feature.getProperty(SimpleFeature.ID)).isNotNull();
+        assertThat(feature.id()).isNotNull();
     }
 
     @Test
@@ -107,15 +106,14 @@ public class SavedSearchTest {
     @Test
     public void store_shouldUpdateEntriesWithPayload() throws Exception {
         Parcel newPayload = Parcel.obtain();
-        SimpleFeature expectedFeature = getTestSimpleFeature();
-        expectedFeature.setProperty(TEXT, "new property");
+        SimpleFeature expectedFeature = getTestSimpleFeature("New SimpleFeature");
         expectedFeature.writeToParcel(newPayload, 0);
         newPayload.setDataPosition(0);
         savedSearch.store("expected", payload);
         savedSearch.store("expected", newPayload);
         SavedSearch.Member member = savedSearch.getIterator().next();
         SimpleFeature simpleFeature = SimpleFeature.readFromParcel(member.getPayload());
-        assertThat(simpleFeature.getProperty(TEXT)).isEqualTo(expectedFeature.getProperty(TEXT));
+        assertThat(simpleFeature.name()).isEqualTo(expectedFeature.name());
         assertThat(countTerms(savedSearch.getSubIterator(MAX_ENTRIES))).isEqualTo(1);
     }
 
@@ -240,14 +238,14 @@ public class SavedSearchTest {
 
     @Test
     public void getItems_shouldReturnAutoCompleteItemsWithSimpleFeature() throws Exception {
-        savedSearch.store("Test SimpleFeature", payload);
+        savedSearch.store(getTestSimpleFeature().label(), payload);
         savedSearch.store("term 2");
         savedSearch.store("term 3");
         List<AutoCompleteItem> items = savedSearch.getItems();
         assertThat(items).hasSize(3);
         assertThat(items.get(0).getText()).isEqualTo("term 3");
         assertThat(items.get(1).getText()).isEqualTo("term 2");
-        assertThat(items.get(2).getText()).isEqualTo("Test SimpleFeature");
+        assertThat(items.get(2).getText()).isEqualTo(getTestSimpleFeature().label());
         assertThat(items.get(0).getSimpleFeature()).isEqualTo(null);
         assertThat(items.get(1).getSimpleFeature()).isEqualTo(null);
         assertThat(items.get(2).getSimpleFeature()).isEqualTo(getTestSimpleFeature());
