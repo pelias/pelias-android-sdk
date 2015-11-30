@@ -176,6 +176,16 @@ public class PeliasSearchViewTest {
         assertThat(listener.submit).isTrue();
     }
 
+    @Test
+    public void setOnPeliasFocusChangeListener_shouldNotifyListener() throws Exception {
+        AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+        TestOnFocusChangeListener listener = new TestOnFocusChangeListener();
+        peliasSearchView.setAutoCompleteListView(listView);
+        peliasSearchView.setOnPeliasFocusChangeListener(listener);
+        shadowOf(getQueryTextView()).setViewFocus(true);
+        assertThat(listener.hasFocus).isTrue();
+    }
+
     private AutoCompleteTextView getQueryTextView() {
         final LinearLayout linearLayout1 = (LinearLayout) peliasSearchView.getChildAt(0);
         final LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
@@ -261,6 +271,14 @@ public class PeliasSearchViewTest {
         private boolean submit;
         @Override public void onSubmit() {
             submit = true;
+        }
+    }
+
+    private class TestOnFocusChangeListener implements View.OnFocusChangeListener {
+        private boolean hasFocus;
+
+        @Override public void onFocusChange(View v, boolean hasFocus) {
+            this.hasFocus = hasFocus;
         }
     }
 }

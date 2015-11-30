@@ -61,6 +61,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private Pelias pelias;
     private Callback<Result> callback;
     private OnSubmitListener onSubmitListener;
+    private OnFocusChangeListener onPeliasFocusChangeListener;
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -86,6 +87,11 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                     listView.setAnimation(slideOut);
                     postDelayed(hideImeRunnable, 300);
                     setOnQueryTextListener(null);
+                }
+
+                // Notify secondary listener
+                if (onPeliasFocusChangeListener != null) {
+                    onPeliasFocusChangeListener.onFocusChange(view, hasFocus);
                 }
             }
         });
@@ -233,6 +239,18 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     public void setCallback(Callback<Result> callback) {
         this.callback = callback;
+    }
+
+    /**
+     * This should be used over {@link #setOnQueryTextFocusChangeListener(OnFocusChangeListener)}
+     * since {@link #setAutoCompleteListView(ListView)} relies on this method to control visibility
+     * of the autocomplete suggestion list. Events will be forwarded by the built-in listener.
+     *
+     * @param onPeliasFocusChangeListener the listener to be invoked when the query text view focus
+     * changes.
+     */
+    public void setOnPeliasFocusChangeListener(OnFocusChangeListener onPeliasFocusChangeListener) {
+        this.onPeliasFocusChangeListener = onPeliasFocusChangeListener;
     }
 
     /**
