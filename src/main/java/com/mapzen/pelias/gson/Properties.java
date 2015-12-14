@@ -12,4 +12,5 @@ public class Properties {
     public String locality = "";
     public String neighbourhood = "";
     public String label = "";
+    public String layer = "";
 }

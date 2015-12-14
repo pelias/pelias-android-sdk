@@ -11,6 +11,8 @@ import auto.parcel.AutoParcel;
 
 @AutoParcel
 public abstract class SimpleFeature implements Parcelable {
+    public static final String ADDRESS_LAYER = "address";
+
     public static SimpleFeature create(
             String id,
             String name,
@@ -23,6 +25,7 @@ public abstract class SimpleFeature implements Parcelable {
             String locality,
             String neighborhood,
             String label,
+            String layer,
             double lat,
             double lng) {
 
@@ -37,6 +40,7 @@ public abstract class SimpleFeature implements Parcelable {
                 .locality(locality)
                 .neighborhood(neighborhood)
                 .label(label)
+                .layer(layer)
                 .lat(lat)
                 .lng(lng)
                 .build();
@@ -53,6 +57,7 @@ public abstract class SimpleFeature implements Parcelable {
     public abstract String locality();
     public abstract String neighborhood();
     public abstract String label();
+    public abstract String layer();
     public abstract double lat();
     public abstract double lng();
 
@@ -69,6 +74,7 @@ public abstract class SimpleFeature implements Parcelable {
         public abstract Builder locality(String locality);
         public abstract Builder neighborhood(String neighborhood);
         public abstract Builder label(String label);
+        public abstract Builder layer(String layer);
         public abstract Builder lat(double lat);
         public abstract Builder lng(double lng);
         public abstract SimpleFeature build();
@@ -93,6 +99,7 @@ public abstract class SimpleFeature implements Parcelable {
                 .locality(feature.properties.locality)
                 .neighborhood(feature.properties.neighbourhood)
                 .label(feature.properties.label)
+                .layer(feature.properties.layer)
                 .lat(feature.geometry.coordinates.get(1))
                 .lng(feature.geometry.coordinates.get(0))
                 .build();
@@ -118,6 +125,7 @@ public abstract class SimpleFeature implements Parcelable {
         properties.locality = locality();
         properties.neighbourhood = neighborhood();
         properties.label = label();
+        properties.layer = layer();
 
         geometry.coordinates.add(lng());
         geometry.coordinates.add(lat());
@@ -137,5 +145,9 @@ public abstract class SimpleFeature implements Parcelable {
 
     public static SimpleFeature readFromParcel(Parcel in) {
         return AutoParcel_SimpleFeature.CREATOR.createFromParcel(in);
+    }
+
+    public boolean isAddress() {
+        return ADDRESS_LAYER.equals(layer());
     }
 }
