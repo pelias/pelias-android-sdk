@@ -2,8 +2,16 @@ package com.mapzen.pelias;
 
 import com.mapzen.pelias.gson.Result;
 
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
+import retrofit.client.OkClient;
 
 public class Pelias {
     private PeliasService service;
@@ -25,9 +33,13 @@ public class Pelias {
     }
 
     private void initService(String serviceEndpoint) {
+        OkHttpClient client = new OkHttpClient();
+        client.networkInterceptors().add(new LoggingInterceptor());
+
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(serviceEndpoint)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setClient(new OkClient((client)))
                 .build();
         this.service = restAdapter.create(PeliasService.class);
     }
@@ -76,5 +88,24 @@ public class Pelias {
 
     public void setApiKey(String key) {
         apiKey = key;
+    }
+
+    class LoggingInterceptor implements Interceptor {
+        @Override
+        public Response intercept(Interceptor.Chain chain) throws IOException {
+            Request request = chain.request();
+
+            long t1 = System.nanoTime();
+            android.util.Log.i("Pelias", String.format("Sending request %s on %s%n%s",
+                    request.url(), chain.connection(), request.headers()));
+
+            Response response = chain.proceed(request);
+
+            long t2 = System.nanoTime();
+            android.util.Log.i("Pelias", String.format("Received response for %s in %.1fms%n%s",
+                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+
+            return response;
+        }
     }
 }
