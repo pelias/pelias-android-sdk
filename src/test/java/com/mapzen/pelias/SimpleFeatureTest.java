@@ -59,6 +59,7 @@ public class SimpleFeatureTest {
                 .lat(1.0)
                 .lng(1.0)
                 .id("123")
+                .gid("osm:venue:123")
                 .name(name)
                 .country("United States")
                 .countryAbbr("USA")
@@ -76,6 +77,7 @@ public class SimpleFeatureTest {
     public static Feature getTestFeature() {
         final Properties properties = new Properties();
         properties.id = "123";
+        properties.gid = "osm:venue:123";
         properties.name = "Test SimpleFeature";
         properties.country = "United States";
         properties.country_a = "USA";
