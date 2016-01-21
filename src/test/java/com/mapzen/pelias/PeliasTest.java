@@ -83,6 +83,12 @@ public class PeliasTest {
     }
 
     @Test
+    public void place_shouldSendSearchRequestToServer() throws Exception {
+        peliasWithMock.place("osm:venue:3669115471", callback);
+        verify(mock).getPlace(eq("osm:venue:3669115471"), eq(apiKey), cb.capture());
+    }
+
+    @Test
     public void setEndpoint_shouldChangeServiceEndpoint() throws Exception {
         final MockWebServer server = new MockWebServer();
         MockResponse response = new MockResponse();

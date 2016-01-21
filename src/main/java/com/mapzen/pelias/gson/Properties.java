@@ -2,6 +2,7 @@ package com.mapzen.pelias.gson;
 
 public class Properties {
     public String id = "";
+    public String gid = "";
     public String name = "";
     public String country_a = "";
     public String country = "";

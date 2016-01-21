@@ -15,6 +15,7 @@ public abstract class SimpleFeature implements Parcelable {
 
     public static SimpleFeature create(
             String id,
+            String gid,
             String name,
             String country,
             String countryAbbr,
@@ -30,6 +31,7 @@ public abstract class SimpleFeature implements Parcelable {
             double lng) {
 
         return builder().id(id)
+                .gid(gid)
                 .name(name)
                 .country(country)
                 .countryAbbr(countryAbbr)
@@ -47,6 +49,7 @@ public abstract class SimpleFeature implements Parcelable {
     }
 
     public abstract String id();
+    public abstract String gid();
     public abstract String name();
     public abstract String country();
     public abstract String countryAbbr();
@@ -64,6 +67,7 @@ public abstract class SimpleFeature implements Parcelable {
     @AutoParcel.Builder
     public abstract static class Builder {
         public abstract Builder id(String id);
+        public abstract Builder gid(String gid);
         public abstract Builder name(String name);
         public abstract Builder country(String country);
         public abstract Builder countryAbbr(String countryAbbr);
@@ -89,6 +93,7 @@ public abstract class SimpleFeature implements Parcelable {
     public static SimpleFeature fromFeature(Feature feature) {
         return SimpleFeature.builder()
                 .id(feature.properties.id)
+                .gid(feature.properties.gid)
                 .name(feature.properties.name)
                 .country(feature.properties.country)
                 .countryAbbr(feature.properties.country_a)
@@ -115,6 +120,7 @@ public abstract class SimpleFeature implements Parcelable {
         final Geometry geometry = new Geometry();
 
         properties.id = id();
+        properties.gid = gid();
         properties.name = name();
         properties.country = country();
         properties.country_a = countryAbbr();

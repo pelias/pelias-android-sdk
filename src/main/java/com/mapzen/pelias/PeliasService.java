@@ -41,7 +41,7 @@ public interface PeliasService {
             Callback<Result> callback);
 
     @GET("/place")
-    void getDoc(@Query("id") String typeAndId,
+    void getPlace(@Query("ids") String ids,
             @Query("api_key") String key,
             Callback<Result> callback);
 }

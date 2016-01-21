@@ -233,8 +233,8 @@ public class PeliasSearchViewTest {
             callback.success(new Result(), null);
         }
 
-        @Override public void getDoc(
-                @Query("id") String typeAndId,
+        @Override public void getPlace(
+                @Query("ids") String ids,
                 @Query("api_key") String key, Callback<Result> callback) {
             callback.success(new Result(), null);
         }

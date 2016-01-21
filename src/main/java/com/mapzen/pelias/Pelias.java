@@ -70,6 +70,10 @@ public class Pelias {
         service.getReverse(lat, lon, apiKey, callback);
     }
 
+    public void place(String gid, Callback<Result> callback) {
+        service.getPlace(gid, apiKey, callback);
+    }
+
     public void setLocationProvider(PeliasLocationProvider locationProvider) {
         this.locationProvider = locationProvider;
     }
