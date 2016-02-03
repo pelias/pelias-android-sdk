@@ -10,6 +10,7 @@ import com.mapzen.pelias.gson.Result;
 import android.content.Context;
 import android.os.ResultReceiver;
 import android.support.v7.widget.SearchView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -65,6 +66,12 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     public PeliasSearchView(Context context) {
         super(context);
+        disableDefaultSoftKeyboardBehaviour();
+        setOnQueryTextListener(this);
+    }
+
+    public PeliasSearchView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         disableDefaultSoftKeyboardBehaviour();
         setOnQueryTextListener(this);
     }
