@@ -19,7 +19,6 @@ import org.robolectric.annotation.Config;
 import android.app.Activity;
 import android.os.Parcel;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -253,7 +252,7 @@ public class PeliasSearchViewTest {
         }
     }
 
-    private class TestAdapter extends ArrayAdapter<AutoCompleteItem> {
+    private class TestAdapter extends AutoCompleteAdapter {
         public TestAdapter() {
             super(ACTIVITY, android.R.layout.simple_list_item_1);
         }

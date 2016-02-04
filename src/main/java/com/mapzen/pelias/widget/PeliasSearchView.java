@@ -62,6 +62,8 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private Callback<Result> callback;
     private OnSubmitListener onSubmitListener;
     private OnFocusChangeListener onPeliasFocusChangeListener;
+    private int recentSearchIconResourceId;
+    private int autoCompleteIconResourceId;
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -172,12 +174,25 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         if (text.isEmpty()) {
             return false;
         } else if (text.length() < 3) {
+            setAutoCompleteAdapterIcon(recentSearchIconResourceId);
             loadSavedSearches();
         } else {
+            setAutoCompleteAdapterIcon(autoCompleteIconResourceId);
             fetchAutoCompleteSuggestions(text);
         }
 
         return false;
+    }
+
+    private void setAutoCompleteAdapterIcon(int resId) {
+        if (autoCompleteListView == null) {
+            return;
+        }
+
+        final AutoCompleteAdapter adapter = (AutoCompleteAdapter) autoCompleteListView.getAdapter();
+        if (adapter != null) {
+            adapter.setIcon(resId);
+        }
     }
 
     private void fetchAutoCompleteSuggestions(String text) {
@@ -306,5 +321,13 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         if (editText != null) {
             editText.setSelection(0);
         }
+    }
+
+    public void setRecentSearchIconResourceId(int recentSearchIconResourceId) {
+        this.recentSearchIconResourceId = recentSearchIconResourceId;
+    }
+
+    public void setAutoCompleteIconResourceId(int autoCompleteIconResourceId) {
+        this.autoCompleteIconResourceId = autoCompleteIconResourceId;
     }
 }

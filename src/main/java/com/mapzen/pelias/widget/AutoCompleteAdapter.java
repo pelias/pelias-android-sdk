@@ -7,28 +7,21 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteItem> {
-    private int recentSearchIconResourceId;
-    private int autoCompleteIconResourceId;
+    private int iconId;
 
     public AutoCompleteAdapter(Context context, int resource) {
         super(context, resource);
-    }
-
-    public void setRecentSearchIconResourceId(int recentSearchIconResourceId) {
-        this.recentSearchIconResourceId = recentSearchIconResourceId;
-    }
-
-    public void setAutoCompleteIconResourceId(int autoCompleteIconResourceId) {
-        this.autoCompleteIconResourceId = autoCompleteIconResourceId;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final TextView textView = (TextView) super.getView(position, convertView, parent);
         final AutoCompleteItem item = getItem(position);
-        final int resId = item.getSimpleFeature() == null ? recentSearchIconResourceId :
-                autoCompleteIconResourceId;
-        textView.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0);
+        textView.setCompoundDrawablesWithIntrinsicBounds(iconId, 0, 0, 0);
         return textView;
+    }
+
+    public void setIcon(int resId) {
+        iconId = resId;
     }
 }
