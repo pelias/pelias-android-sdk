@@ -84,6 +84,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
             public void onFocusChange(View view, boolean hasFocus) {
                 if (hasFocus) {
                     final Animation slideIn = loadAnimation(getContext(), R.anim.slide_in);
+                    setAutoCompleteAdapterIcon(recentSearchIconResourceId);
                     loadSavedSearches();
                     listView.setVisibility(VISIBLE);
                     listView.setAnimation(slideIn);
