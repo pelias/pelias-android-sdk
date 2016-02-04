@@ -30,17 +30,17 @@ public class AutoCompleteListView extends ListView {
     }
 
     private void init() {
-        headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
-        addHeaderView(headerView, null, false);
-        setHeaderDividersEnabled(false);
+        //headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
+        //addHeaderView(headerView, null, false);
+        //setHeaderDividersEnabled(false);
     }
 
     public void showHeader() {
-        headerView.findViewById(R.id.recent_search_header).setVisibility(VISIBLE);
+        //headerView.findViewById(R.id.recent_search_header).setVisibility(VISIBLE);
     }
 
     public void hideHeader() {
-        headerView.findViewById(R.id.recent_search_header).setVisibility(GONE);
+        //headerView.findViewById(R.id.recent_search_header).setVisibility(GONE);
     }
 
     public boolean isHeaderVisible() {

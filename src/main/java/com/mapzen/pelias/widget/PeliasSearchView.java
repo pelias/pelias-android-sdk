@@ -17,7 +17,6 @@ import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Field;
@@ -202,10 +201,13 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                     ((AutoCompleteListView) autoCompleteListView).hideHeader();
                 }
 
-                final HeaderViewListAdapter headerViewListAdapter =
-                        (HeaderViewListAdapter) autoCompleteListView.getAdapter();
-                final AutoCompleteAdapter adapter =
-                        (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
+                //final HeaderViewListAdapter headerViewListAdapter =
+                //        (HeaderViewListAdapter) autoCompleteListView.getAdapter();
+                //final AutoCompleteAdapter adapter =
+                //        (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
+
+                final AutoCompleteAdapter adapter = (AutoCompleteAdapter)
+                        autoCompleteListView.getAdapter();
                 adapter.clear();
                 adapter.addAll(items);
                 adapter.notifyDataSetChanged();
@@ -230,11 +232,12 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
             ((AutoCompleteListView) autoCompleteListView).showHeader();
         }
 
-        final HeaderViewListAdapter headerViewListAdapter =
-                (HeaderViewListAdapter) autoCompleteListView.getAdapter();
-        final AutoCompleteAdapter adapter =
-                (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
+        //final HeaderViewListAdapter headerViewListAdapter =
+        //        (HeaderViewListAdapter) autoCompleteListView.getAdapter();
+        //final AutoCompleteAdapter adapter =
+        //        (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
 
+        final AutoCompleteAdapter adapter = (AutoCompleteAdapter) autoCompleteListView.getAdapter();
         adapter.clear();
         adapter.addAll(savedSearch.getItems());
         adapter.notifyDataSetChanged();
