@@ -64,15 +64,18 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private OnFocusChangeListener onPeliasFocusChangeListener;
     private int recentSearchIconResourceId;
     private int autoCompleteIconResourceId;
+    private boolean disableAutoComplete;
 
     public PeliasSearchView(Context context) {
         super(context);
+        disableAutoComplete = false;
         disableDefaultSoftKeyboardBehaviour();
         setOnQueryTextListener(this);
     }
 
     public PeliasSearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        disableAutoComplete = false;
         disableDefaultSoftKeyboardBehaviour();
         setOnQueryTextListener(this);
     }
@@ -105,30 +108,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
             }
         });
 
-        autoCompleteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final AutoCompleteItem item =
-                        (AutoCompleteItem) autoCompleteListView.getAdapter().getItem(position);
-
-                if (item.getSimpleFeature() == null) {
-                    setQuery(item.getText(), true);
-                    resetCursorPosition();
-                } else {
-                    final Result result = new Result();
-                    final ArrayList<Feature> features = new ArrayList<>(1);
-                    clearFocus();
-                    setQuery(item.getText(), false);
-                    resetCursorPosition();
-                    features.add(item.getSimpleFeature().toFeature());
-                    result.setFeatures(features);
-                    if (callback != null) {
-                        callback.success(result, null);
-                    }
-                    savedSearch.store(item.getText(), item.getSimpleFeature().toParcel());
-                }
-            }
-        });
+        autoCompleteListView.setOnItemClickListener(new OnItemClickHandler().invoke());
     }
 
     /**
@@ -172,7 +152,8 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     @Override
     public boolean onQueryTextChange(String text) {
-        if (text.isEmpty()) {
+        if (text.isEmpty() || disableAutoComplete) {
+            disableAutoComplete = false;
             return false;
         } else if (text.length() < 3) {
             setAutoCompleteAdapterIcon(recentSearchIconResourceId);
@@ -184,6 +165,10 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
         return false;
     }
+
+    public void disableAutoComplete() {
+        disableAutoComplete = true;
+        }
 
     private void setAutoCompleteAdapterIcon(int resId) {
         if (autoCompleteListView == null) {
@@ -330,5 +315,34 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     public void setAutoCompleteIconResourceId(int autoCompleteIconResourceId) {
         this.autoCompleteIconResourceId = autoCompleteIconResourceId;
+    }
+
+    public class OnItemClickHandler {
+        public AdapterView.OnItemClickListener invoke() {
+            return new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    final AutoCompleteItem item =
+                            (AutoCompleteItem) autoCompleteListView.getAdapter().getItem(position);
+
+                    if (item.getSimpleFeature() == null) {
+                        setQuery(item.getText(), true);
+                        resetCursorPosition();
+                    } else {
+                        final Result result = new Result();
+                        final ArrayList<Feature> features = new ArrayList<>(1);
+                        clearFocus();
+                        setQuery(item.getText(), false);
+                        resetCursorPosition();
+                        features.add(item.getSimpleFeature().toFeature());
+                        result.setFeatures(features);
+                        if (callback != null) {
+                            callback.success(result, null);
+                        }
+                        savedSearch.store(item.getText(), item.getSimpleFeature().toParcel());
+                    }
+                }
+            };
+        }
     }
 }
