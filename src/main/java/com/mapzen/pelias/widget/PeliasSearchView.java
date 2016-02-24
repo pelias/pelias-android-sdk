@@ -153,6 +153,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     @Override
     public boolean onQueryTextChange(String text) {
         if (text.isEmpty() || disableAutoComplete) {
+            setAutoCompleteAdapterIcon(autoCompleteIconResourceId);
             disableAutoComplete = false;
             return false;
         } else if (text.length() < 3) {
