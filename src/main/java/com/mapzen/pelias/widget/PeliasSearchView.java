@@ -56,6 +56,17 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         }
     };
 
+    private Runnable backPressedRunnable = new Runnable() {
+        @Override public void run() {
+            if (onBackPressListener != null && !focusedViewHasFocus && !listItemClicked
+                    && !textSubmitted) {
+                onBackPressListener.onBackPressed();
+            }
+            textSubmitted = false;
+            listItemClicked = false;
+        }
+    };
+
     private ListView autoCompleteListView;
     private SavedSearch savedSearch;
     private Pelias pelias;
@@ -65,6 +76,10 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private int recentSearchIconResourceId;
     private int autoCompleteIconResourceId;
     private boolean disableAutoComplete;
+    private boolean focusedViewHasFocus = false;
+    private boolean listItemClicked = false;
+    private boolean textSubmitted = false;
+    private OnBackPressListener onBackPressListener;
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -105,6 +120,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                 if (onPeliasFocusChangeListener != null) {
                     onPeliasFocusChangeListener.onFocusChange(view, hasFocus);
                 }
+
+                focusedViewHasFocus = hasFocus;
+                postDelayed(backPressedRunnable, 300);
             }
         });
 
@@ -144,7 +162,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         if (onSubmitListener != null) {
             onSubmitListener.onSubmit();
         }
-
+        textSubmitted = true;
         clearFocus();
         resetCursorPosition();
         return false;
@@ -342,8 +360,28 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                         }
                         savedSearch.store(item.getText(), item.getSimpleFeature().toParcel());
                     }
+                    listItemClicked = true;
                 }
             };
         }
+    }
+
+    /**
+     * Listener to simulate when the SearchBar gains focus and then loses it when the user presses
+     * back without executing a search or clicking on an item in the autocomplete list view
+     *
+     * {@link OnBackPressListener#onBackPressed()} is called after
+     * {@link OnSubmitListener#onSubmit()},
+     * {@link OnFocusChangeListener#onFocusChange(View, boolean)}, and
+     * {@link android.widget.AdapterView.OnItemClickListener#onItemClick(
+     * AdapterView, View, int, long)} are called
+     *
+     */
+    public interface OnBackPressListener {
+        public void onBackPressed();
+    }
+
+    public void setOnBackPressListener(OnBackPressListener onBackPressListener) {
+        this.onBackPressListener = onBackPressListener;
     }
 }
