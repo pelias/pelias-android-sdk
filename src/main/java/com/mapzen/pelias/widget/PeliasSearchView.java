@@ -58,12 +58,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     private Runnable backPressedRunnable = new Runnable() {
         @Override public void run() {
-            if (onBackPressListener != null && !focusedViewHasFocus && !listItemClicked
-                    && !textSubmitted) {
-                onBackPressListener.onBackPressed();
-            }
-            textSubmitted = false;
-            listItemClicked = false;
+            notifyOnBackPressListener();
         }
     };
 
@@ -383,5 +378,16 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     public void setOnBackPressListener(OnBackPressListener onBackPressListener) {
         this.onBackPressListener = onBackPressListener;
+    }
+
+    protected void notifyOnBackPressListener() {
+        if (onBackPressListener == null) {
+            return;
+        }
+        if (!focusedViewHasFocus && !listItemClicked && !textSubmitted) {
+            onBackPressListener.onBackPressed();
+        }
+        textSubmitted = false;
+        listItemClicked = false;
     }
 }
