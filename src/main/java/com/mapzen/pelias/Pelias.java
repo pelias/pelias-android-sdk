@@ -9,8 +9,10 @@ public class Pelias {
     private PeliasService service;
     public static final String DEFAULT_SERVICE_ENDPOINT = "https://search.mapzen.com/v1/";
     private String apiKey = "";
-    static Pelias instance = null;
+    private static Pelias instance = null;
     private PeliasLocationProvider locationProvider;
+
+    private static RestAdapter.LogLevel logLevel;
 
     protected Pelias(PeliasService service) {
         this.service = service;
@@ -27,19 +29,31 @@ public class Pelias {
     private void initService(String serviceEndpoint) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(serviceEndpoint)
-                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLogLevel(logLevel)
                 .build();
         this.service = restAdapter.create(PeliasService.class);
     }
 
     public static Pelias getPeliasWithEndpoint(String endpoint) {
+        return getPeliasWithEndpoint(endpoint, RestAdapter.LogLevel.NONE);
+    }
+
+    public static Pelias getPelias() {
+        return getPelias(RestAdapter.LogLevel.NONE);
+    }
+
+    public static Pelias getPeliasWithEndpoint(String endpoint, RestAdapter.LogLevel logLevel) {
+        Pelias.logLevel = logLevel;
+
         if (instance == null) {
             instance = new Pelias(endpoint);
         }
         return instance;
     }
 
-    public static Pelias getPelias() {
+    public static Pelias getPelias(RestAdapter.LogLevel logLevel) {
+        Pelias.logLevel = logLevel;
+
         if (instance == null) {
             instance = new Pelias();
         }
