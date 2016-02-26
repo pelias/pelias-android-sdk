@@ -1,5 +1,6 @@
 package com.mapzen.pelias.widget;
 
+import android.view.inputmethod.EditorInfo;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
@@ -78,16 +79,19 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     public PeliasSearchView(Context context) {
         super(context);
-        disableAutoComplete = false;
-        disableDefaultSoftKeyboardBehaviour();
-        setOnQueryTextListener(this);
+        setup();
     }
 
     public PeliasSearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setup();
+    }
+
+    private void setup() {
         disableAutoComplete = false;
         disableDefaultSoftKeyboardBehaviour();
         setOnQueryTextListener(this);
+        setImeOptions(EditorInfo.IME_ACTION_SEARCH);
     }
 
     public void setAutoCompleteListView(final ListView listView) {
