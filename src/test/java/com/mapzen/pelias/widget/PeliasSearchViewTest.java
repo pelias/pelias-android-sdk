@@ -1,5 +1,7 @@
 package com.mapzen.pelias.widget;
 
+import android.view.KeyEvent;
+import android.view.ViewGroup;
 import com.mapzen.pelias.BuildConfig;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.PeliasService;
@@ -27,6 +29,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.http.Query;
+
+import java.lang.reflect.Method;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
@@ -185,6 +189,55 @@ public class PeliasSearchViewTest {
         assertThat(listener.hasFocus).isTrue();
     }
 
+    @Test
+    public void onBackPressListener_shouldNotifyWhenKeyboardVisibleAndBackPressed() throws Exception {
+        TestOnBackPressListener listener = new TestOnBackPressListener();
+        peliasSearchView.setOnBackPressListener(listener);
+        shadowOf(getQueryTextView()).setViewFocus(true);
+        peliasSearchView.notifyOnBackPressListener();
+        assertThat(listener.pressed).isTrue();
+    }
+
+    @Test
+    public void onBackPressListener_shouldNotNotifyOnAutocompleteItemClicked() {
+        TestOnBackPressListener listener = new TestOnBackPressListener();
+        peliasSearchView.setOnBackPressListener(listener);
+        shadowOf(getQueryTextView()).setViewFocus(true);
+        AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+        peliasSearchView.setAutoCompleteListView(listView);
+        final AutoCompleteAdapter adapter = new AutoCompleteAdapter(ACTIVITY,
+                android.R.layout.simple_list_item_1);
+        final SavedSearch savedSearch = new SavedSearch();
+        final Parcel payload = Parcel.obtain();
+        final SimpleFeature simpleFeature = SimpleFeatureTest.getTestSimpleFeature();
+        simpleFeature.writeToParcel(payload, 0);
+        payload.setDataPosition(0);
+        savedSearch.store("Test", payload);
+        listView.setAdapter(adapter);
+        peliasSearchView.setAutoCompleteListView(listView);
+        peliasSearchView.setSavedSearch(savedSearch);
+        peliasSearchView.loadSavedSearches();
+        shadowOf(listView).performItemClick(0);
+        assertThat(listener.pressed).isFalse();
+    }
+
+    @Test
+    public void onBackPressListener_shouldNotNotifyOnSearchSubmitted() {
+        TestOnBackPressListener listener = new TestOnBackPressListener();
+        peliasSearchView.setOnBackPressListener(listener);
+        shadowOf(getQueryTextView()).setViewFocus(true);
+        peliasSearchView.onQueryTextSubmit("Test");
+        assertThat(listener.pressed).isFalse();
+    }
+
+    @Test
+    public void onBackPressListener_shouldNotNotifyWhenSearchViewFocused() {
+        TestOnBackPressListener listener = new TestOnBackPressListener();
+        peliasSearchView.setOnBackPressListener(listener);
+        shadowOf(getQueryTextView()).setViewFocus(true);
+        assertThat(listener.pressed).isFalse();
+    }
+
     private AutoCompleteTextView getQueryTextView() {
         final LinearLayout linearLayout1 = (LinearLayout) peliasSearchView.getChildAt(0);
         final LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
@@ -268,6 +321,7 @@ public class PeliasSearchViewTest {
 
     private class TestOnSubmitListener implements PeliasSearchView.OnSubmitListener {
         private boolean submit;
+
         @Override public void onSubmit() {
             submit = true;
         }
@@ -279,5 +333,11 @@ public class PeliasSearchViewTest {
         @Override public void onFocusChange(View v, boolean hasFocus) {
             this.hasFocus = hasFocus;
         }
+    }
+
+    private class TestOnBackPressListener implements PeliasSearchView.OnBackPressListener {
+        private boolean pressed;
+
+        @Override public void onBackPressed() { pressed = true; }
     }
 }
