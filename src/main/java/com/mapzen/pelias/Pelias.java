@@ -3,6 +3,7 @@ package com.mapzen.pelias;
 import com.mapzen.pelias.gson.Result;
 
 import retrofit.Callback;
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 
 public class Pelias {
@@ -13,6 +14,10 @@ public class Pelias {
     private PeliasLocationProvider locationProvider;
 
     private static RestAdapter.LogLevel logLevel;
+
+    public static final String HEADER_DNT = "DNT";
+    public static final String VALUE_DNT = "1";
+    private boolean dntEnabled = true;
 
     protected Pelias(PeliasService service) {
         this.service = service;
@@ -30,6 +35,7 @@ public class Pelias {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(serviceEndpoint)
                 .setLogLevel(logLevel)
+                .setRequestInterceptor(new AddHeadersInterceptor())
                 .build();
         this.service = restAdapter.create(PeliasService.class);
     }
@@ -94,5 +100,27 @@ public class Pelias {
 
     public void setApiKey(String key) {
         apiKey = key;
+    }
+
+    /**
+     * When header "DNT=1" is present in requests, logs are dropped on server
+     *
+     * Default is enabled
+     */
+    public void setDntEnabled(boolean enabled) {
+        this.dntEnabled = enabled;
+    }
+
+    public boolean isDntEnabled() {
+        return dntEnabled;
+    }
+
+    private class AddHeadersInterceptor implements RequestInterceptor {
+
+        @Override public void intercept(RequestFacade request) {
+            if (dntEnabled) {
+                request.addHeader(HEADER_DNT, VALUE_DNT);
+            }
+        }
     }
 }

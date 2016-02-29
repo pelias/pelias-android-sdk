@@ -41,6 +41,11 @@ public class PeliasTest {
     }
 
     @Test
+    public void pelias_dntShouldBeEnabledByDefault() {
+        assertThat(peliasWithMock.isDntEnabled()).isTrue();
+    }
+
+    @Test
     public void search_getSearch() throws Exception {
         BoundingBox boundingBox = new BoundingBox(1.0, 2.0, 3.0 ,4.0);
         peliasWithMock.search("test", boundingBox, callback);
@@ -98,6 +103,34 @@ public class PeliasTest {
         pelias.suggest("test", 1.0, 2.0, callback);
         RecordedRequest request = server.takeRequest();
         assertThat(request.getPath()).contains("/autocomplete");
+        server.shutdown();
+    }
+
+    @Test
+    public void setDntEnabled_shouldAddDntHeader() throws Exception {
+        final MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse().setResponseCode(200);
+        server.enqueue(response);
+        server.play();
+        Pelias pelias = Pelias.getPeliasWithEndpoint(server.getUrl("/").toString());
+        pelias.suggest("test", 1.0, 2.0, callback);
+        RecordedRequest request = server.takeRequest();
+        assertThat(request.getHeaders("DNT")).isNotEmpty();
+        assertThat(request.getHeaders("DNT").get(0)).isEqualTo("1");
+        server.shutdown();
+    }
+
+    @Test
+    public void setDntDisabled_shouldNotAddDntHeader() throws Exception {
+        final MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse().setResponseCode(200);
+        server.enqueue(response);
+        server.play();
+        Pelias pelias = Pelias.getPeliasWithEndpoint(server.getUrl("/").toString());
+        pelias.setDntEnabled(false);
+        pelias.suggest("test", 1.0, 2.0, callback);
+        RecordedRequest request = server.takeRequest();
+        assertThat(request.getHeaders("DNT")).isEmpty();
         server.shutdown();
     }
 
