@@ -31,6 +31,8 @@ public final class SavedSearch {
             _ID, SEARCH_TERM
     };
 
+    public static final String JSON_STRING_EMPTY_ARRAY = "[]";
+
     private LinkedList<Member> store = new LinkedList<>();
 
     public class Member {
@@ -104,11 +106,7 @@ public final class SavedSearch {
     }
 
     public int store(String term) {
-        truncate();
-        Member member = new Member(term);
-        store.remove(member);
-        store.addFirst(member);
-        return 0;
+        return store(term, null);
     }
 
     public Member get(int i) {
@@ -142,8 +140,13 @@ public final class SavedSearch {
         return jsonArray.toString();
     }
 
+    private boolean isEmptyArrayString(String serializedString) {
+        return serializedString.equals(JSON_STRING_EMPTY_ARRAY);
+    }
+
     public void deserialize(String serializedSavedSearch) {
-        if (serializedSavedSearch == null || serializedSavedSearch.isEmpty()) {
+        if (serializedSavedSearch == null || serializedSavedSearch.isEmpty()
+                || isEmptyArrayString(serializedSavedSearch)) {
             return;
         }
 
@@ -187,7 +190,6 @@ public final class SavedSearch {
         for (Member member : store) {
             terms.add(member.getTerm());
         }
-
         return terms;
     }
 
@@ -205,7 +207,6 @@ public final class SavedSearch {
                 items.add(new AutoCompleteItem(term));
             }
         }
-
         return items;
     }
 

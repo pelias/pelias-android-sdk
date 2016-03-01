@@ -238,6 +238,42 @@ public class PeliasSearchViewTest {
         assertThat(listener.pressed).isFalse();
     }
 
+    @Test
+    public void shouldCacheSearchResultsByDefault() {
+        assertThat(peliasSearchView.cacheSearchResults()).isTrue();
+    }
+
+    @Test
+    public void setCacheSearchResults_shouldSaveQueryOnSearch() {
+        AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+        peliasSearchView.setAutoCompleteListView(listView);
+        SavedSearch savedSearch = new SavedSearch();
+        peliasSearchView.setSavedSearch(savedSearch);
+        peliasSearchView.onQueryTextSubmit("test");
+        assertThat(savedSearch.getItems().size()).isEqualTo(1);
+    }
+
+    @Test
+    public void setCacheSearchResultsDisabled_shouldNotSaveQueryOnSearch() {
+        AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+        peliasSearchView.setAutoCompleteListView(listView);
+        SavedSearch savedSearch = new SavedSearch();
+        peliasSearchView.setSavedSearch(savedSearch);
+        peliasSearchView.setCacheSearchResults(false);
+        peliasSearchView.onQueryTextSubmit("test");
+        assertThat(savedSearch.getItems().size()).isEqualTo(0);
+    }
+
+    @Test
+    public void setSavedSearch_shouldClearSaveSearchesIfCacheSearchResultsDisabled() {
+        peliasSearchView.setCacheSearchResults(false);
+        SavedSearch savedSearch = new SavedSearch();
+        savedSearch.store("test");
+        peliasSearchView.setSavedSearch(savedSearch);
+        assertThat(savedSearch.getItems().size()).isEqualTo(0);
+
+    }
+
     private AutoCompleteTextView getQueryTextView() {
         final LinearLayout linearLayout1 = (LinearLayout) peliasSearchView.getChildAt(0);
         final LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
