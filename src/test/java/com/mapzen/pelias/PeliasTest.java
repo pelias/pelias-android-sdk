@@ -77,7 +77,7 @@ public class PeliasTest {
     public void suggest_getSuggestWithLocationProvider() throws Exception {
         peliasWithMock.setLocationProvider(new TestLocationProvider());
         peliasWithMock.suggest("test", callback);
-        verify(mock).getSuggest(eq("test"), eq(1.0), eq(2.0),eq(apiKey), cb.capture());
+        verify(mock).getSuggest(eq("test"), eq(1.0), eq(2.0), eq(apiKey), cb.capture());
     }
 
     @Test
@@ -103,34 +103,19 @@ public class PeliasTest {
         pelias.suggest("test", 1.0, 2.0, callback);
         RecordedRequest request = server.takeRequest();
         assertThat(request.getPath()).contains("/autocomplete");
-        server.shutdown();
-    }
 
-    @Test
-    public void setDntEnabled_shouldAddDntHeader() throws Exception {
-        final MockWebServer server = new MockWebServer();
-        MockResponse response = new MockResponse().setResponseCode(200);
-        server.enqueue(response);
-        server.play();
-        Pelias pelias = Pelias.getPeliasWithEndpoint(server.getUrl("/").toString());
+        //TODO: create method setDntEnabled_shouldAddDntHeader()
         pelias.suggest("test", 1.0, 2.0, callback);
-        RecordedRequest request = server.takeRequest();
-        assertThat(request.getHeaders("DNT")).isNotEmpty();
-        assertThat(request.getHeaders("DNT").get(0)).isEqualTo("1");
-        server.shutdown();
-    }
+        request = server.takeRequest();
+        assertThat(request.getHeaders(Pelias.HEADER_DNT)).isNotEmpty();
+        assertThat(request.getHeaders(Pelias.HEADER_DNT).get(0)).isEqualTo(Pelias.VALUE_DNT);
 
-    @Test
-    public void setDntDisabled_shouldNotAddDntHeader() throws Exception {
-        final MockWebServer server = new MockWebServer();
-        MockResponse response = new MockResponse().setResponseCode(200);
-        server.enqueue(response);
-        server.play();
-        Pelias pelias = Pelias.getPeliasWithEndpoint(server.getUrl("/").toString());
+        //TODO: create method setDntDisabled_shouldNotAddDntHeader()
         pelias.setDntEnabled(false);
         pelias.suggest("test", 1.0, 2.0, callback);
-        RecordedRequest request = server.takeRequest();
-        assertThat(request.getHeaders("DNT")).isEmpty();
+        request = server.takeRequest();
+        assertThat(request.getHeaders(Pelias.HEADER_DNT)).isEmpty();
+
         server.shutdown();
     }
 
