@@ -41,6 +41,11 @@ public class PeliasTest {
     }
 
     @Test
+    public void pelias_dntShouldBeEnabledByDefault() {
+        assertThat(peliasWithMock.isDntEnabled()).isTrue();
+    }
+
+    @Test
     public void search_getSearch() throws Exception {
         BoundingBox boundingBox = new BoundingBox(1.0, 2.0, 3.0 ,4.0);
         peliasWithMock.search("test", boundingBox, callback);
@@ -72,7 +77,7 @@ public class PeliasTest {
     public void suggest_getSuggestWithLocationProvider() throws Exception {
         peliasWithMock.setLocationProvider(new TestLocationProvider());
         peliasWithMock.suggest("test", callback);
-        verify(mock).getSuggest(eq("test"), eq(1.0), eq(2.0),eq(apiKey), cb.capture());
+        verify(mock).getSuggest(eq("test"), eq(1.0), eq(2.0), eq(apiKey), cb.capture());
     }
 
     @Test
@@ -98,6 +103,19 @@ public class PeliasTest {
         pelias.suggest("test", 1.0, 2.0, callback);
         RecordedRequest request = server.takeRequest();
         assertThat(request.getPath()).contains("/autocomplete");
+
+        //TODO: create method setDntEnabled_shouldAddDntHeader()
+        pelias.suggest("test", 1.0, 2.0, callback);
+        request = server.takeRequest();
+        assertThat(request.getHeaders(Pelias.HEADER_DNT)).isNotEmpty();
+        assertThat(request.getHeaders(Pelias.HEADER_DNT).get(0)).isEqualTo(Pelias.VALUE_DNT);
+
+        //TODO: create method setDntDisabled_shouldNotAddDntHeader()
+        pelias.setDntEnabled(false);
+        pelias.suggest("test", 1.0, 2.0, callback);
+        request = server.takeRequest();
+        assertThat(request.getHeaders(Pelias.HEADER_DNT)).isEmpty();
+
         server.shutdown();
     }
 
