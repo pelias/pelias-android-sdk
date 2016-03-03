@@ -1,5 +1,6 @@
 package com.mapzen.pelias.widget;
 
+import android.os.Parcel;
 import android.view.inputmethod.EditorInfo;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
@@ -76,6 +77,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private boolean listItemClicked = false;
     private boolean textSubmitted = false;
     private OnBackPressListener onBackPressListener;
+    private boolean cacheSearchResults = true;
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -154,9 +156,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
             pelias.search(query, callback);
         }
 
-        if (savedSearch != null) {
-            savedSearch.store(query);
-        }
+        storeSavedSearch(query, null);
 
         if (onSubmitListener != null) {
             onSubmitListener.onSubmit();
@@ -240,6 +240,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
     public void setSavedSearch(SavedSearch savedSearch) {
         this.savedSearch = savedSearch;
+        updateSavedSearch();
     }
 
     public void loadSavedSearches() {
@@ -357,7 +358,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                         if (callback != null) {
                             callback.success(result, null);
                         }
-                        savedSearch.store(item.getText(), item.getSimpleFeature().toParcel());
+                        storeSavedSearch(item.getText(), item.getSimpleFeature().toParcel());
                     }
                     listItemClicked = true;
                 }
@@ -393,5 +394,39 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         }
         textSubmitted = false;
         listItemClicked = false;
+    }
+
+    private void storeSavedSearch(String query, Parcel parcel) {
+        if (savedSearch == null || !cacheSearchResults) {
+            return;
+        }
+        if (parcel == null) {
+            savedSearch.store(query);
+        } else {
+            savedSearch.store(query, parcel);
+        }
+    }
+
+    public void setCacheSearchResults(boolean cacheResults) {
+        cacheSearchResults = cacheResults;
+        updateSavedSearch();
+    }
+
+    public boolean cacheSearchResults() {
+        return cacheSearchResults;
+    }
+
+    private void updateSavedSearch() {
+        if (savedSearch != null && !cacheSearchResults) {
+            savedSearch.clear();
+            if (autoCompleteListView != null) {
+                final AutoCompleteAdapter adapter =
+                        (AutoCompleteAdapter) autoCompleteListView.getAdapter();
+                if (adapter != null) {
+                    adapter.clear();
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 }
