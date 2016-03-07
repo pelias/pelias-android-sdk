@@ -429,4 +429,18 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
             }
         }
     }
+
+    /**
+     * When super is called, the {@link SearchView#getOnFocusChangeListener()} is invoked which
+     * posts a delayed call to the {@link PeliasSearchView#backPressedRunnable}. We cancel this
+     * post because it was not invoked from the back button being pressed
+     */
+    @Override public void onActionViewCollapsed() {
+        super.onActionViewCollapsed();
+        postDelayed(new Runnable() {
+            @Override public void run() {
+                removeCallbacks(backPressedRunnable);
+            }
+        }, 150);
+    }
 }
