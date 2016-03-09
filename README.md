@@ -3,7 +3,7 @@ pelias-android-sdk
 
 Android sdk for pelias
 
-[![Circle CI Build Status](https://circleci.com/gh/mapzen/pelias-android-sdk.png?circle-token=6e6203a065375a8fb6fabb5a689c11dcd8fa78cf)](https://circleci.com/gh/mapzen/pelias-android-sdk)
+[![Circle CI](https://circleci.com/gh/pelias/pelias-android-sdk.svg?style=svg&circle-token=6e6203a065375a8fb6fabb5a689c11dcd8fa78cf)](https://circleci.com/gh/pelias/pelias-android-sdk)
 
 ## Usage
 
