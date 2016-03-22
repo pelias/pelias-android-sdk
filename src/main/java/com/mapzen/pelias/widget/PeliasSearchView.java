@@ -78,6 +78,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private boolean textSubmitted = false;
     private OnBackPressListener onBackPressListener;
     private boolean cacheSearchResults = true;
+    private boolean autoKeyboardShow = true;
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -107,7 +108,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                     loadSavedSearches();
                     listView.setVisibility(VISIBLE);
                     listView.setAnimation(slideIn);
-                    postDelayed(showImeRunnable, 300);
+                    if (autoKeyboardShow) {
+                        postDelayed(showImeRunnable, 300);
+                    }
                     setOnQueryTextListener(PeliasSearchView.this);
                 } else {
                     final Animation slideOut = loadAnimation(getContext(), R.anim.slide_out);
@@ -128,6 +131,18 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         });
 
         autoCompleteListView.setOnItemClickListener(new OnItemClickHandler().invoke());
+    }
+
+    /**
+     * Prevent the keyboard from showing for example when the autocomplete list is shown and
+     * the view has focus
+     */
+    public void disableAutoKeyboardShow() {
+        autoKeyboardShow = false;
+    }
+
+    public void enableAutoKeyboardShow() {
+        autoKeyboardShow = true;
     }
 
     /**
