@@ -97,6 +97,32 @@ public class PeliasSearchViewTest {
     }
 
     @Test
+    public void disableAutoKeyboardShow_shouldNotShowImeWhenQueryGetsFocus() throws Exception {
+        AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+        listView.setVisibility(View.GONE);
+        peliasSearchView.disableAutoKeyboardShow();
+        peliasSearchView.setAutoCompleteListView(listView);
+        AutoCompleteTextView queryText = getQueryTextView();
+        shadowOf(queryText).setViewFocus(true);
+        Robolectric.flushForegroundScheduler();
+        assertThat(ShadowInputMethodManager.isSoftInputVisible()).isFalse();
+    }
+
+    @Test
+    public void enableAutoKeyboardShow_shouldShowImeWhenQueryGetsFocus() throws Exception {
+        AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+        listView.setVisibility(View.GONE);
+        peliasSearchView.disableAutoKeyboardShow();
+        peliasSearchView.enableAutoKeyboardShow();
+        peliasSearchView.setAutoCompleteListView(listView);
+        AutoCompleteTextView queryText = getQueryTextView();
+        shadowOf(queryText).setViewFocus(true);
+        Robolectric.flushForegroundScheduler();
+        assertThat(ShadowInputMethodManager.isSoftInputVisible()).isTrue();
+    }
+
+
+    @Test
     public void onQueryTextSubmit_shouldClearFocus() throws Exception {
         peliasSearchView.requestFocus();
         peliasSearchView.onQueryTextSubmit("query");
