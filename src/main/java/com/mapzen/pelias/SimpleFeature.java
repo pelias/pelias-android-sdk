@@ -25,6 +25,7 @@ public abstract class SimpleFeature implements Parcelable {
             String localAdmin,
             String locality,
             String neighborhood,
+            Double confidence,
             String label,
             String layer,
             double lat,
@@ -41,6 +42,7 @@ public abstract class SimpleFeature implements Parcelable {
                 .localAdmin(localAdmin)
                 .locality(locality)
                 .neighborhood(neighborhood)
+                .confidence(confidence)
                 .label(label)
                 .layer(layer)
                 .lat(lat)
@@ -59,6 +61,7 @@ public abstract class SimpleFeature implements Parcelable {
     public abstract String localAdmin();
     public abstract String locality();
     public abstract String neighborhood();
+    public abstract Double confidence();
     public abstract String label();
     public abstract String layer();
     public abstract double lat();
@@ -77,6 +80,7 @@ public abstract class SimpleFeature implements Parcelable {
         public abstract Builder localAdmin(String localAdmin);
         public abstract Builder locality(String locality);
         public abstract Builder neighborhood(String neighborhood);
+        public abstract Builder confidence(Double confidence);
         public abstract Builder label(String label);
         public abstract Builder layer(String layer);
         public abstract Builder lat(double lat);
@@ -103,6 +107,7 @@ public abstract class SimpleFeature implements Parcelable {
                 .localAdmin(feature.properties.localadmin)
                 .locality(feature.properties.locality)
                 .neighborhood(feature.properties.neighbourhood)
+                .confidence(feature.properties.confidence)
                 .label(feature.properties.label)
                 .layer(feature.properties.layer)
                 .lat(feature.geometry.coordinates.get(1))
@@ -130,6 +135,7 @@ public abstract class SimpleFeature implements Parcelable {
         properties.localadmin = localAdmin();
         properties.locality = locality();
         properties.neighbourhood = neighborhood();
+        properties.confidence = confidence();
         properties.label = label();
         properties.layer = layer();
 
