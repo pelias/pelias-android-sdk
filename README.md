@@ -102,7 +102,7 @@ peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
 
 #### Download Jar
 
-Download the [latest JAR][1].
+Download the [latest AAR][1].
 
 #### Maven
 
@@ -112,7 +112,7 @@ Include dependency using Maven.
 <dependency>
   <groupId>com.mapzen.android</groupId>
   <artifactId>pelias-android-sdk</artifactId>
-  <version>0.3.1</version>
+  <version>0.7</version>
 </dependency>
 ```
 
@@ -121,8 +121,8 @@ Include dependency using Maven.
 Include dependency using Gradle.
 
 ```groovy
-compile 'com.mapzen.android:pelias-android-sdk:0.3.1'
+compile 'com.mapzen.android:pelias-android-sdk:0.7'
 ```
 
-[1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/0.3.1/pelias-android-sdk-0.3.1.jar
+[1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/0.7/pelias-android-sdk-0.7.aar
 [2]: https://github.com/mapzen/pelias#setup-performance-information
