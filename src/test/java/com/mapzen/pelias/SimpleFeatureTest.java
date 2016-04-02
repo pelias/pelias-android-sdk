@@ -69,6 +69,7 @@ public class SimpleFeatureTest {
                 .localAdmin("Manhattan")
                 .locality("New York")
                 .neighborhood("Koreatown")
+                .confidence(1.0)
                 .label("Test SimpleFeature, Manhattan, NY")
                 .layer("locality")
                 .build();
@@ -87,6 +88,7 @@ public class SimpleFeatureTest {
         properties.localadmin = "Manhattan";
         properties.locality = "New York";
         properties.neighbourhood = "Koreatown";
+        properties.confidence = 1.0;
         properties.label = "Test SimpleFeature, Manhattan, NY";
         properties.layer = "locality";
 

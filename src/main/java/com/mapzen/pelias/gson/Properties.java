@@ -12,6 +12,7 @@ public class Properties {
     public String localadmin = "";
     public String locality = "";
     public String neighbourhood = "";
+    public Double confidence = 0.0;
     public String label = "";
     public String layer = "";
 }
