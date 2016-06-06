@@ -116,7 +116,11 @@ public abstract class SimpleFeature implements Parcelable {
     }
 
     public String address() {
-        return label().substring(label().indexOf(", ") + 2);
+        int commaIndex = label().indexOf(", ");
+        if (commaIndex != -1) {
+            return label().substring(commaIndex + 2);
+        }
+        return label();
     }
 
     public Feature toFeature() {
