@@ -3,11 +3,14 @@ package com.mapzen.pelias.widget;
 import android.os.Parcel;
 import android.view.inputmethod.EditorInfo;
 import com.mapzen.pelias.Pelias;
+import com.mapzen.pelias.PeliasMapPositionListener;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
 import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.pelias.gson.Feature;
 import com.mapzen.pelias.gson.Result;
+
+import com.squareup.okhttp.internal.http.Failure;
 
 import android.content.Context;
 import android.os.ResultReceiver;
@@ -79,6 +82,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     private OnBackPressListener onBackPressListener;
     private boolean cacheSearchResults = true;
     private boolean autoKeyboardShow = true;
+    private PeliasMapPositionListener mapPositionListener;
 
     public PeliasSearchView(Context context) {
         super(context);
@@ -219,38 +223,54 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
             return;
         }
 
-        pelias.suggest(text, new Callback<Result>() {
-            @Override public void success(Result result, Response response) {
-                final ArrayList<AutoCompleteItem> items = new ArrayList<>();
-                final List<Feature> features = result.getFeatures();
-                for (Feature feature : features) {
-                    items.add(new AutoCompleteItem(SimpleFeature.fromFeature(feature)));
+        if (mapPositionListener != null) {
+            pelias.suggest(text, mapPositionListener.getLat(), mapPositionListener.getLng(),
+                new Callback<Result>() {
+                    @Override public void success(Result result, Response response) {
+                        handleAutocompleteResultSuccess(result);
+                    }
+
+                    @Override public void failure(RetrofitError error) {
+                        handleAutocompleteResultFailure(error);
+                    }
+                });
+        } else {
+            pelias.suggest(text, new Callback<Result>() {
+                @Override public void success(Result result, Response response) {
+                    handleAutocompleteResultSuccess(result);
                 }
 
-                if (autoCompleteListView == null) {
-                    return;
+                @Override public void failure(RetrofitError error) {
+                    handleAutocompleteResultFailure(error);
                 }
+            });
+        }
+    }
 
-                if (autoCompleteListView instanceof AutoCompleteListView) {
-                    ((AutoCompleteListView) autoCompleteListView).hideHeader();
-                }
+    private void handleAutocompleteResultSuccess(Result result) {
+        final ArrayList<AutoCompleteItem> items = new ArrayList<>();
+        final List<Feature> features = result.getFeatures();
+        for (Feature feature : features) {
+            items.add(new AutoCompleteItem(SimpleFeature.fromFeature(feature)));
+        }
 
-                //final HeaderViewListAdapter headerViewListAdapter =
-                //        (HeaderViewListAdapter) autoCompleteListView.getAdapter();
-                //final AutoCompleteAdapter adapter =
-                //        (AutoCompleteAdapter) headerViewListAdapter.getWrappedAdapter();
+        if (autoCompleteListView == null) {
+            return;
+        }
 
-                final AutoCompleteAdapter adapter = (AutoCompleteAdapter)
-                        autoCompleteListView.getAdapter();
-                adapter.clear();
-                adapter.addAll(items);
-                adapter.notifyDataSetChanged();
-            }
+        if (autoCompleteListView instanceof AutoCompleteListView) {
+            ((AutoCompleteListView) autoCompleteListView).hideHeader();
+        }
 
-            @Override public void failure(RetrofitError error) {
-                Log.e(TAG, "Unable to fetch autocomplete results", error);
-            }
-        });
+        final AutoCompleteAdapter adapter = (AutoCompleteAdapter)
+            autoCompleteListView.getAdapter();
+        adapter.clear();
+        adapter.addAll(items);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void handleAutocompleteResultFailure(RetrofitError error) {
+        Log.e(TAG, "Unable to fetch autocomplete results", error);
     }
 
     public void setSavedSearch(SavedSearch savedSearch) {
@@ -457,5 +477,14 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
                 removeCallbacks(backPressedRunnable);
             }
         }, 150);
+    }
+
+  /**
+   * If you want autocomplete suggestions to use the map's location instead of the
+   * device's location, then set this listener
+   * @param listener
+   */
+  public void setMapPositionListener(PeliasMapPositionListener listener) {
+        mapPositionListener = listener;
     }
 }
