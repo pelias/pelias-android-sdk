@@ -12,7 +12,6 @@ public interface PeliasService {
             @Query("text") String query,
             @Query("focus.point.lat") double lat,
             @Query("focus.point.lon") double lon,
-            @Query("api_key") String key,
             Callback<Result> callback);
 
     @GET("/search")
@@ -22,7 +21,6 @@ public interface PeliasService {
             @Query("focus.viewport.min_lon") double minLon,
             @Query("focus.viewport.max_lat") double maxLat,
             @Query("focus.viewport.max_lon") double maxLon,
-            @Query("api_key") String key,
             Callback<Result> callback);
 
     @GET("/search")
@@ -30,18 +28,15 @@ public interface PeliasService {
             @Query("text") String query,
             @Query("focus.point.lat") double lat,
             @Query("focus.point.lon") double lon,
-            @Query("api_key") String key,
             Callback<Result> callback);
 
     @GET("/reverse")
     void getReverse(
             @Query("point.lat") double lat,
             @Query("point.lon") double lon,
-            @Query("api_key") String key,
             Callback<Result> callback);
 
     @GET("/place")
     void getPlace(@Query("ids") String ids,
-            @Query("api_key") String key,
             Callback<Result> callback);
 }
