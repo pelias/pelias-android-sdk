@@ -31,12 +31,16 @@ public class Pelias {
             .setRequestInterceptor(new RequestInterceptor() {
                 @Override public void intercept(RequestFacade request) {
                     if (requestHandler != null) {
-                        for (String key : requestHandler.headersForRequest().keySet()) {
-                            request.addHeader(key, requestHandler.headersForRequest().get(key));
+                        if (requestHandler.headersForRequest() != null) {
+                            for (String key : requestHandler.headersForRequest().keySet()) {
+                                request.addHeader(key, requestHandler.headersForRequest().get(key));
+                            }
                         }
-                        for (String key : requestHandler.queryParamsForRequest().keySet()) {
-                            request.addQueryParam(key, requestHandler.queryParamsForRequest()
-                                .get(key));
+                        if (requestHandler.queryParamsForRequest() != null) {
+                            for (String key : requestHandler.queryParamsForRequest().keySet()) {
+                                request.addQueryParam(key, requestHandler.queryParamsForRequest()
+                                    .get(key));
+                            }
                         }
                     }
                 }
