@@ -305,8 +305,7 @@ public class PeliasSearchViewTest {
 
     private class TestPelias extends Pelias {
         protected TestPelias() {
-            super();
-            setService(new TestPeliasService());
+            super(new TestPeliasService());
         }
     }
 

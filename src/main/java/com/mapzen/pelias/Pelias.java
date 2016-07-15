@@ -11,13 +11,42 @@ public class Pelias {
 
     private PeliasService service;
     private PeliasLocationProvider locationProvider;
+    private PeliasRequestHandler requestHandler;
 
     public Pelias() {
-
+        initService(DEFAULT_SEARCH_ENDPOINT);
     }
 
-    public void setService(PeliasService service) {
+    public Pelias(PeliasService service) {
         this.service = service;
+    }
+
+    public Pelias(String url) {
+        initService(url);
+    }
+
+    private void initService(String endpoint) {
+        RestAdapter adapter = new RestAdapter.Builder()
+            .setEndpoint(endpoint)
+            .setRequestInterceptor(new RequestInterceptor() {
+                @Override public void intercept(RequestFacade request) {
+                    if (requestHandler != null) {
+                        for (String key : requestHandler.headersForRequest().keySet()) {
+                            request.addHeader(key, requestHandler.headersForRequest().get(key));
+                        }
+                        for (String key : requestHandler.queryParamsForRequest().keySet()) {
+                            request.addQueryParam(key, requestHandler.queryParamsForRequest()
+                                .get(key));
+                        }
+                    }
+                }
+            })
+            .build();
+        this.service = adapter.create(PeliasService.class);
+    }
+
+    public void setRequestHandler(PeliasRequestHandler handler) {
+        requestHandler = handler;
     }
 
     public void suggest(String query, Callback<Result> callback) {

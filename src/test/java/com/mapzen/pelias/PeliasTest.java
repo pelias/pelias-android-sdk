@@ -13,6 +13,9 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -38,8 +41,7 @@ public class PeliasTest {
         MockitoAnnotations.initMocks(this);
         callback = new TestCallback();
         mock = Mockito.mock(PeliasService.class);
-        peliasWithMock = new Pelias();
-        peliasWithMock.setService(mock);
+        peliasWithMock = new Pelias(mock);
     }
 
     @Test
@@ -96,19 +98,29 @@ public class PeliasTest {
         MockResponse response = new MockResponse();
         server.enqueue(response);
         server.play();
-        Pelias pelias = new Pelias();
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(
-            server.getUrl("/").toString()).setRequestInterceptor(new RequestInterceptor() {
-            @Override public void intercept(RequestFacade request) {
-                request.addQueryParam("api_key", apiKey);
+        Pelias pelias = new Pelias(server.getUrl("/").toString());
+        pelias.setRequestHandler(new PeliasRequestHandler() {
+            @Override public Map<String, String> headersForRequest() {
+                HashMap<String, String> headers = new HashMap();
+                headers.put("TEST_HEADER", "TEST_HEADER_VALUE");
+                return headers;
             }
-        }).build();
-        pelias.setService(restAdapter.create(PeliasService.class));
+
+            @Override public Map<String, String> queryParamsForRequest() {
+                HashMap<String, String> params = new HashMap();
+                params.put("TEST_PARAM", "TEST_PARAM_VALUE");
+                return params;
+            }
+        });
         pelias.suggest("test", 1.0, 2.0, callback);
         RecordedRequest request = server.takeRequest();
         assertThat(request.getPath()).contains("/autocomplete");
+        assertThat(request.getHeader("TEST_HEADER")).isEqualTo("TEST_HEADER_VALUE");
+        assertThat(request.getPath()).contains("TEST_PARAM");
         server.shutdown();
     }
+
+
 
     class TestCallback implements Callback<Result> {
         @Override
