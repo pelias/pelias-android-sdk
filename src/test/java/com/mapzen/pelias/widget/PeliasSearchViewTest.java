@@ -1,7 +1,5 @@
 package com.mapzen.pelias.widget;
 
-import android.view.KeyEvent;
-import android.view.ViewGroup;
 import com.mapzen.pelias.BuildConfig;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.PeliasService;
@@ -29,8 +27,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.http.Query;
-
-import java.lang.reflect.Method;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
@@ -318,7 +314,7 @@ public class PeliasSearchViewTest {
                 @Query("text") String query,
                 @Query("focus.point.lat") double lat,
                 @Query("focus.point.lon") double lon,
-                @Query("api_key") String key, Callback<Result> callback) {
+                Callback<Result> callback) {
             callback.success(new Result(), null);
         }
 
@@ -328,7 +324,7 @@ public class PeliasSearchViewTest {
                 @Query("focus.viewport.min_lat") double minLat,
                 @Query("focus.viewport.max_lon") double maxLon,
                 @Query("focus.viewport.max_lat") double maxLat,
-                @Query("api_key") String key, Callback<Result> callback) {
+                Callback<Result> callback) {
             callback.success(new Result(), null);
         }
 
@@ -336,20 +332,20 @@ public class PeliasSearchViewTest {
                 @Query("text") String query,
                 @Query("focus.point.lat") double lat,
                 @Query("focus.point.lon") double lon,
-                @Query("api_key") String key, Callback<Result> callback) {
+                Callback<Result> callback) {
             callback.success(new Result(), null);
         }
 
         @Override public void getReverse(
                 @Query("point.lat") double lat,
                 @Query("point.lon") double lon,
-                @Query("api_key") String key, Callback<Result> callback) {
+                Callback<Result> callback) {
             callback.success(new Result(), null);
         }
 
         @Override public void getPlace(
                 @Query("ids") String ids,
-                @Query("api_key") String key, Callback<Result> callback) {
+                Callback<Result> callback) {
             callback.success(new Result(), null);
         }
     }
