@@ -274,7 +274,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
         final AutoCompleteAdapter adapter = (AutoCompleteAdapter) autoCompleteListView.getAdapter();
         adapter.clear();
-        adapter.addAll(savedSearch.getItems());
+        if (savedSearch != null) {
+            adapter.addAll(savedSearch.getItems());
+        }
         adapter.notifyDataSetChanged();
     }
 
