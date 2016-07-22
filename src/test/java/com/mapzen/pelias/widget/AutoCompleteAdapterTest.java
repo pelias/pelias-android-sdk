@@ -7,16 +7,14 @@ import org.robolectric.RuntimeEnvironment;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class AutoCompleteAdapterTest {
-    private AutoCompleteAdapter adapter;
+  private AutoCompleteAdapter adapter;
 
-    @Before
-    public void setUp() throws Exception {
-        adapter = new AutoCompleteAdapter(RuntimeEnvironment.application,
-                android.R.layout.simple_list_item_1);
-    }
+  @Before public void setUp() throws Exception {
+    adapter = new AutoCompleteAdapter(RuntimeEnvironment.application,
+        android.R.layout.simple_list_item_1);
+  }
 
-    @Test
-    public void shouldNotBeNull() throws Exception {
-        assertThat(adapter).isNotNull();
-    }
+  @Test public void shouldNotBeNull() throws Exception {
+    assertThat(adapter).isNotNull();
+  }
 }
