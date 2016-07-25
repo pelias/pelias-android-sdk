@@ -18,47 +18,42 @@ import android.view.inputmethod.InputMethodManager;
 @Implements(value = InputMethodManager.class, callThroughByDefault = false)
 public class ShadowInputMethodManager {
 
-    private static boolean softInputVisible;
+  private static boolean softInputVisible;
 
-    @HiddenApi @Implementation
-    static public InputMethodManager peekInstance() {
-        return Shadow.newInstanceOf(InputMethodManager.class);
-    }
+  @HiddenApi @Implementation public static InputMethodManager peekInstance() {
+    return Shadow.newInstanceOf(InputMethodManager.class);
+  }
 
-    @Implementation
-    public boolean showSoftInput(View view, int flags) {
-        return showSoftInput(view, flags, null);
-    }
+  @Implementation public boolean showSoftInput(View view, int flags) {
+    return showSoftInput(view, flags, null);
+  }
 
-    @Implementation
-    public boolean showSoftInput(View view, int flags, ResultReceiver resultReceiver) {
-        softInputVisible = true;
-        return true;
-    }
+  @Implementation
+  public boolean showSoftInput(View view, int flags, ResultReceiver resultReceiver) {
+    softInputVisible = true;
+    return true;
+  }
 
-    @HiddenApi @Implementation
-    public void showSoftInputUnchecked(int flags, ResultReceiver resultReceiver) {
-        softInputVisible = true;
-    }
+  @HiddenApi @Implementation
+  public void showSoftInputUnchecked(int flags, ResultReceiver resultReceiver) {
+    softInputVisible = true;
+  }
 
-    @Implementation
-    public boolean hideSoftInputFromWindow(IBinder windowToken, int flags) {
-        return hideSoftInputFromWindow(windowToken, flags, null);
-    }
+  @Implementation public boolean hideSoftInputFromWindow(IBinder windowToken, int flags) {
+    return hideSoftInputFromWindow(windowToken, flags, null);
+  }
 
-    @Implementation
-    public boolean hideSoftInputFromWindow(IBinder windowToken, int flags,
-            ResultReceiver resultReceiver) {
-        softInputVisible = false;
-        return true;
-    }
+  @Implementation public boolean hideSoftInputFromWindow(IBinder windowToken, int flags,
+      ResultReceiver resultReceiver) {
+    softInputVisible = false;
+    return true;
+  }
 
-    @Implementation
-    public void toggleSoftInput(int showFlags, int hideFlags) {
-        softInputVisible = !softInputVisible;
-    }
+  @Implementation public void toggleSoftInput(int showFlags, int hideFlags) {
+    softInputVisible = !softInputVisible;
+  }
 
-    public static boolean isSoftInputVisible() {
-        return softInputVisible;
-    }
+  public static boolean isSoftInputVisible() {
+    return softInputVisible;
+  }
 }

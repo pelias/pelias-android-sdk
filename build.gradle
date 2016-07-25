@@ -13,11 +13,21 @@ buildscript {
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'checkstyle'
 
 group = GROUP
 version = VERSION_NAME
 
-defaultTasks = ['clean', 'assembleDebug', 'copyTask', 'testDebug', 'install']
+defaultTasks = ['clean', 'assembleDebug', 'checkstyle', 'copyTask', 'testDebug', 'install']
+
+task checkstyle(type: Checkstyle) {
+  configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+  source 'src'
+  include '**/*.java'
+  exclude '**/gen/**'
+
+  classpath = files()
+}
 
 task copyTask(type: Copy) {
   println "Copying com/mapzen/pelias/R.java to android/support/v7/appcompat/R.java"
