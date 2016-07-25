@@ -103,6 +103,17 @@ public class PeliasTest {
     server.shutdown();
   }
 
+  @Test public void setDebug_shouldChangeLogLevel() {
+    assertThat(peliasWithMock.getDebug()).isFalse();
+    peliasWithMock.setDebug(true);
+    assertThat(peliasWithMock.getDebug()).isTrue();
+  }
+
+  @Test public void setEndpoint_shouldChangeEndpoint() {
+    peliasWithMock.setEndpoint("http://pelias.com/test");
+    assertThat(peliasWithMock.getEndpoint()).isEqualTo("http://pelias.com/test");
+  }
+
   class TestCallback implements Callback<Result> {
     @Override public void success(Result o, Response response) {
     }
