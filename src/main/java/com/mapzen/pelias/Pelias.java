@@ -69,6 +69,15 @@ public class Pelias {
   }
 
   /**
+   * Sets the service to be used. Set a custom service to provide custom configurations for
+   * search urls and logging levels.
+   * @param service
+   */
+  public void setService(PeliasService service) {
+    this.service = service;
+  }
+
+  /**
    * Returns autocomplete suggestions given a query string. The query will use the
    * {@link PeliasLocationProvider} to retrieve a lat/lon to use as a focus point for the request.
    * The callback will be notified upon success or failure of query.
