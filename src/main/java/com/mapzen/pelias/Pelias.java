@@ -15,12 +15,15 @@ public class Pelias {
   private PeliasService service;
   private PeliasLocationProvider locationProvider;
   private PeliasRequestHandler requestHandler;
+  private String endpoint = DEFAULT_SEARCH_ENDPOINT;
+  private RestAdapter.LogLevel logLevel = RestAdapter.LogLevel.NONE;
+  private RestAdapter restAdapter;
 
   /**
    * Constructs a {@link Pelias} object configured to use the default search endpoint for requests.
    */
   public Pelias() {
-    initService(DEFAULT_SEARCH_ENDPOINT);
+    initService();
   }
 
   /**
@@ -35,11 +38,14 @@ public class Pelias {
    * Constructs a {@link Pelias} object configured to use the provided url for requests.
    */
   public Pelias(String url) {
-    initService(url);
+    endpoint = url;
+    initService();
   }
 
-  private void initService(String endpoint) {
-    RestAdapter adapter = new RestAdapter.Builder().setEndpoint(endpoint)
+  private void initService() {
+    restAdapter = new RestAdapter.Builder()
+        .setEndpoint(endpoint)
+        .setLogLevel(logLevel)
         .setRequestInterceptor(new RequestInterceptor() {
           @Override public void intercept(RequestFacade request) {
             if (requestHandler != null) {
@@ -57,7 +63,7 @@ public class Pelias {
           }
         })
         .build();
-    this.service = adapter.create(PeliasService.class);
+    this.service = restAdapter.create(PeliasService.class);
   }
 
   /**
@@ -66,6 +72,24 @@ public class Pelias {
    */
   public void setRequestHandler(PeliasRequestHandler handler) {
     requestHandler = handler;
+  }
+
+  /**
+   * Sets endpoint for all http requests.
+   * @param endpoint
+   */
+  public void setEndpoint(String endpoint) {
+    this.endpoint = endpoint;
+    initService();
+  }
+
+  /**
+   * When debugging, http requests are logged.
+   * @param debug
+   */
+  public void setDebug(boolean debug) {
+    this.logLevel = debug ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE;
+    initService();
   }
 
   /**
@@ -136,4 +160,24 @@ public class Pelias {
   public void setLocationProvider(PeliasLocationProvider locationProvider) {
     this.locationProvider = locationProvider;
   }
+
+  /**
+   * Returns the http endpoint.
+   * @return
+   */
+  public String getEndpoint() {
+    return endpoint;
+  }
+
+  /**
+   * Returns whether or not debug is enabled.
+   * @return
+   */
+  public boolean getDebug() {
+    if (restAdapter == null) {
+      return false;
+    }
+    return (restAdapter.getLogLevel() == RestAdapter.LogLevel.FULL);
+  }
+
 }
