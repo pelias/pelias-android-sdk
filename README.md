@@ -112,7 +112,7 @@ Include dependency using Maven.
 <dependency>
   <groupId>com.mapzen.android</groupId>
   <artifactId>pelias-android-sdk</artifactId>
-  <version>0.7.1</version>
+  <version>0.7.2</version>
 </dependency>
 ```
 
@@ -121,8 +121,8 @@ Include dependency using Maven.
 Include dependency using Gradle.
 
 ```groovy
-compile 'com.mapzen.android:pelias-android-sdk:0.7.1'
+compile 'com.mapzen.android:pelias-android-sdk:0.7.2'
 ```
 
-[1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/0.7.1/pelias-android-sdk-0.7.1.aar
+[1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/0.7.1/pelias-android-sdk-0.7.2.aar
 [2]: https://github.com/mapzen/pelias#setup-performance-information
