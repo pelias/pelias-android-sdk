@@ -1,13 +1,13 @@
-pelias-android-sdk
+Pelias Android SDK
 ==================
 
-Android sdk for pelias
+Android SDK for Pelias
 
 [![Circle CI](https://circleci.com/gh/pelias/pelias-android-sdk.svg?style=svg&circle-token=6e6203a065375a8fb6fabb5a689c11dcd8fa78cf)](https://circleci.com/gh/pelias/pelias-android-sdk)
 
 ## Usage
 
-Pelias Android Sdk is a wrapper for Pelias
+Pelias Android SDK is a client-side Java wrapper for Pelias plus Android specific integrations.
 
 #### Initialization
 
@@ -49,7 +49,7 @@ getPeliasWithEndpoint("http://your-pelias-domain.com").search("term to search", 
 
 The current stratedgy for testing involves mocking the service instance which is an retrofit interface which describes the paths to the API.
 
-You can extend Pelias where you can inject you mock object ... we use Mockito which is awesome
+You can extend Pelias where you can inject you mock object ... we use Mockito which is awesome.
 
 ```java
 package com.mapzen.android;
@@ -69,7 +69,7 @@ public final class TestPelias extends Pelias {
 }
 ```
 
-Then when you want to interact with Pelias in stests you can just feed it a mock
+Then when you want to interact with Pelias in stests you can just feed it a mock.
 
 ```java
 @Captor
@@ -86,13 +86,14 @@ Mockito.verify(peliasServiceMock)
 ```
 With this you can verify which arguments got sent to the service ... and then to test success or failure path you can can capture the callback and retrive the value and call respective callbacks with your own object mocks you want to have returned in your test.
 
-success
+**success**
 
 ```java
 peliasCallback.getValue().success(results, response);
 ```
 
-failure
+**failure**
+
 ```java
 peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
 ```
@@ -112,7 +113,7 @@ Include dependency using Maven.
 <dependency>
   <groupId>com.mapzen.android</groupId>
   <artifactId>pelias-android-sdk</artifactId>
-  <version>0.7.2</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
@@ -121,8 +122,8 @@ Include dependency using Maven.
 Include dependency using Gradle.
 
 ```groovy
-compile 'com.mapzen.android:pelias-android-sdk:0.7.2'
+compile 'com.mapzen.android:pelias-android-sdk:1.0.0'
 ```
 
-[1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/0.7.1/pelias-android-sdk-0.7.2.aar
+[1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/1.0.0/pelias-android-sdk-1.0.0.aar
 [2]: https://github.com/mapzen/pelias#setup-performance-information
