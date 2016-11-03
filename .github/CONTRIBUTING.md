@@ -31,3 +31,5 @@ Essentially the IntelliJ default Java style, but with two-space indents.
 3. Curly braces for everything: if, else, etc.
 4. One line of white space between methods.
 5. Single imports only.
+
+The full Mapzen Android code style settings can be installed from https://github.com/mapzen/java-code-styles.
