@@ -11,6 +11,7 @@ buildscript {
     classpath 'com.github.dcendents:android-maven-plugin:1.2'
     classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     classpath 'net.researchgate:gradle-release:2.4.0'
+    classpath 'net.vrallev.gradle:jarjar-gradle:1.1.0'
   }
 }
 
@@ -19,6 +20,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'checkstyle'
 apply plugin: 'net.researchgate.release'
+apply plugin: 'net.vrallev.jarjar'
 
 group = GROUP
 version = VERSION_NAME
@@ -83,12 +85,16 @@ repositories {
 }
 
 dependencies {
+  compile fileTree(dir: 'jarjar-libs', include: ['*.jar'])
+
   compile 'com.android.support:appcompat-v7:22.2.1@aar'
   compile 'com.android.support:support-v4:22.2.1@aar'
-  compile 'com.squareup.okhttp:okhttp:1.5.2'
-  compile 'com.squareup.retrofit:retrofit:1.5.0'
   compile 'javax.annotation:javax.annotation-api:1.2'
   compile 'com.github.frankiesardo:auto-parcel:0.3.1'
+
+  jarjar 'com.squareup.okhttp:okhttp:1.5.2'
+  jarjar 'com.squareup.retrofit:retrofit:1.5.0'
+
   apt 'com.github.frankiesardo:auto-parcel-processor:0.3.1'
 
   testCompile 'junit:junit:4.12'
@@ -99,6 +105,17 @@ dependencies {
     exclude group: 'commons-logging', module: 'commons-logging'
     exclude group: 'org.apache.httpcomponents', module: 'httpclient'
   }
+}
+
+jarjar {
+  jarJarFile 'tools/jarjar-1.4.jar'
+  rules = [
+      'rule com.squareup.okhttp.** mapzen.pelias.com.squareup.okhttp.@1',
+      'rule com.squareup.retrofit.** mapzen.pelias.com.squareup.retrofit.@1',
+  ]
+  srcExcludes = ['META-INF/**']
+  outputName 'jarjar-deps.jar'
+  outputDir 'jarjar-libs'
 }
 
 apply from: file('gradle-mvn-push.gradle')
