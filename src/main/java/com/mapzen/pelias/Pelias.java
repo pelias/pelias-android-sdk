@@ -3,6 +3,7 @@ package com.mapzen.pelias;
 import com.mapzen.pelias.gson.Result;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -50,13 +51,18 @@ public class Pelias {
       requestInterceptor.setRequestHandler(requestHandler);
     }
 
-    final OkHttpClient client = new OkHttpClient.Builder()
-        .addInterceptor(requestInterceptor)
-        .build();
+    final OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+    clientBuilder.addNetworkInterceptor(requestInterceptor);
+
+    if (debug) {
+      final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+      logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+      clientBuilder.addNetworkInterceptor(logging);
+    }
 
     retrofit = new Retrofit.Builder()
         .baseUrl(endpoint)
-        .client(client)
+        .client(clientBuilder.build())
         .addConverterFactory(GsonConverterFactory.create())
         .build();
     this.service = retrofit.create(PeliasService.class);
