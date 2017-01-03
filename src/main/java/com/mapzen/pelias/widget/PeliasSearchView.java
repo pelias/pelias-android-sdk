@@ -27,9 +27,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
 
@@ -236,9 +236,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     }
 
     pelias.suggest(text, new Callback<Result>() {
-      @Override public void success(Result result, Response response) {
+      @Override public void onResponse(Call<Result> call, Response<Result> response) {
         final ArrayList<AutoCompleteItem> items = new ArrayList<>();
-        final List<Feature> features = result.getFeatures();
+        final List<Feature> features = response.body().getFeatures();
         for (Feature feature : features) {
           items.add(new AutoCompleteItem(SimpleFeature.fromFeature(feature)));
         }
@@ -253,8 +253,8 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         adapter.notifyDataSetChanged();
       }
 
-      @Override public void failure(RetrofitError error) {
-        Log.e(TAG, "Unable to fetch autocomplete results", error);
+      @Override public void onFailure(Call<Result> call, Throwable t) {
+        Log.e(TAG, "Unable to fetch autocomplete results", t);
       }
     });
   }
@@ -387,7 +387,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
   public class OnItemClickHandler {
 
     /**
-     * Returns a click listener to be used by the autcomplete list view. Listener handles setting
+     * Returns a click listener to be used by the autocomplete list view. Listener handles setting
      * the search view's query, resetting the cursor position, clearing view focus, invoking the
      * callback and saving the search term.
      */
@@ -409,7 +409,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
             features.add(item.getSimpleFeature().toFeature());
             result.setFeatures(features);
             if (callback != null) {
-              callback.success(result, null);
+              callback.onResponse(null, Response.success(result));
             }
             storeSavedSearch(item.getText(), item.getSimpleFeature().toParcel());
           }

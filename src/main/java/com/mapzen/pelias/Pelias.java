@@ -2,22 +2,25 @@ package com.mapzen.pelias;
 
 import com.mapzen.pelias.gson.Result;
 
-import retrofit.Callback;
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Main class for interaction with Pelias.
  */
 public class Pelias {
-  public static final String DEFAULT_SEARCH_ENDPOINT = "https://search.mapzen.com/v1/";
+  public static final String DEFAULT_SEARCH_ENDPOINT = "https://search.mapzen.com/";
 
   private PeliasService service;
   private PeliasLocationProvider locationProvider;
   private PeliasRequestHandler requestHandler;
   private String endpoint = DEFAULT_SEARCH_ENDPOINT;
-  private RestAdapter.LogLevel logLevel = RestAdapter.LogLevel.NONE;
-  private RestAdapter restAdapter;
+  private boolean debug = false;
+  private Retrofit retrofit;
+  private RequestInterceptor requestInterceptor;
 
   /**
    * Constructs a {@link Pelias} object configured to use the default search endpoint for requests.
@@ -43,27 +46,26 @@ public class Pelias {
   }
 
   private void initService() {
-    restAdapter = new RestAdapter.Builder()
-        .setEndpoint(endpoint)
-        .setLogLevel(logLevel)
-        .setRequestInterceptor(new RequestInterceptor() {
-          @Override public void intercept(RequestFacade request) {
-            if (requestHandler != null) {
-              if (requestHandler.headersForRequest() != null) {
-                for (String key : requestHandler.headersForRequest().keySet()) {
-                  request.addHeader(key, requestHandler.headersForRequest().get(key));
-                }
-              }
-              if (requestHandler.queryParamsForRequest() != null) {
-                for (String key : requestHandler.queryParamsForRequest().keySet()) {
-                  request.addQueryParam(key, requestHandler.queryParamsForRequest().get(key));
-                }
-              }
-            }
-          }
-        })
+    requestInterceptor = new RequestInterceptor();
+    if (requestHandler != null) {
+      requestInterceptor.setRequestHandler(requestHandler);
+    }
+
+    final OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+    clientBuilder.addNetworkInterceptor(requestInterceptor);
+
+    if (debug) {
+      final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+      logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+      clientBuilder.addNetworkInterceptor(logging);
+    }
+
+    retrofit = new Retrofit.Builder()
+        .baseUrl(endpoint)
+        .client(clientBuilder.build())
+        .addConverterFactory(GsonConverterFactory.create())
         .build();
-    this.service = restAdapter.create(PeliasService.class);
+    this.service = retrofit.create(PeliasService.class);
   }
 
   /**
@@ -72,6 +74,9 @@ public class Pelias {
    */
   public void setRequestHandler(PeliasRequestHandler handler) {
     requestHandler = handler;
+    if (requestInterceptor != null) {
+      requestInterceptor.setRequestHandler(handler);
+    }
   }
 
   /**
@@ -88,7 +93,7 @@ public class Pelias {
    * @param debug
    */
   public void setDebug(boolean debug) {
-    this.logLevel = debug ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE;
+    this.debug = debug;
     initService();
   }
 
@@ -106,7 +111,7 @@ public class Pelias {
    * point for results The callback will be notified upon success or failure of the query.
    */
   public void suggest(String query, double lat, double lon, Callback<Result> callback) {
-    service.getSuggest(query, lat, lon, callback);
+    service.getSuggest(query, lat, lon).enqueue(callback);
   }
 
   /**
@@ -124,8 +129,8 @@ public class Pelias {
    * the query.
    */
   public void search(String query, BoundingBox box, Callback<Result> callback) {
-    service.getSearch(query, box.getMinLat(), box.getMinLon(), box.getMaxLat(), box.getMaxLon(),
-        callback);
+    service.getSearch(query, box.getMinLat(), box.getMinLon(), box.getMaxLat(), box.getMaxLon())
+        .enqueue(callback);
   }
 
   /**
@@ -134,7 +139,7 @@ public class Pelias {
    * the query.
    */
   public void search(String query, double lat, double lon, Callback<Result> callback) {
-    service.getSearch(query, lat, lon, callback);
+    service.getSearch(query, lat, lon).enqueue(callback);
   }
 
   /**
@@ -142,7 +147,7 @@ public class Pelias {
    * or failure of the query.
    */
   public void reverse(double lat, double lon, Callback<Result> callback) {
-    service.getReverse(lat, lon, callback);
+    service.getReverse(lat, lon).enqueue(callback);
   }
 
   /**
@@ -150,7 +155,7 @@ public class Pelias {
    * success or failure of the query.
    */
   public void place(String gid, Callback<Result> callback) {
-    service.getPlace(gid, callback);
+    service.getPlace(gid).enqueue(callback);
   }
 
   /**
@@ -174,10 +179,6 @@ public class Pelias {
    * @return
    */
   public boolean getDebug() {
-    if (restAdapter == null) {
-      return false;
-    }
-    return (restAdapter.getLogLevel() == RestAdapter.LogLevel.FULL);
+    return debug;
   }
-
 }

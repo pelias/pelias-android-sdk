@@ -23,10 +23,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import retrofit.http.Query;
+import java.io.IOException;
+
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.Query;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
@@ -287,46 +290,73 @@ public class PeliasSearchViewTest {
   }
 
   private class TestPeliasService implements PeliasService {
-    @Override
-    public void getSuggest(@Query("text") String query, @Query("focus.point.lat") double lat,
-        @Query("focus.point.lon") double lon, Callback<Result> callback) {
-      callback.success(new Result(), null);
+    @Override public Call<Result> getSuggest(@Query("text") String query,
+        @Query("focus.point.lat") double lat, @Query("focus.point.lon") double lon) {
+      return new TestCall();
     }
 
-    @Override public void getSearch(@Query("text") String query,
+    @Override public Call<Result> getSearch(@Query("text") String query,
         @Query("focus.viewport.min_lon") double minLon,
         @Query("focus.viewport.min_lat") double minLat,
         @Query("focus.viewport.max_lon") double maxLon,
-        @Query("focus.viewport.max_lat") double maxLat, Callback<Result> callback) {
-      callback.success(new Result(), null);
+        @Query("focus.viewport.max_lat") double maxLat) {
+      return new TestCall();
     }
 
-    @Override
-    public void getSearch(@Query("text") String query, @Query("focus.point.lat") double lat,
-        @Query("focus.point.lon") double lon, Callback<Result> callback) {
-      callback.success(new Result(), null);
+    @Override public Call<Result> getSearch(@Query("text") String query,
+        @Query("focus.point.lat") double lat, @Query("focus.point.lon") double lon) {
+      return new TestCall();
     }
 
-    @Override public void getReverse(@Query("point.lat") double lat, @Query("point.lon") double lon,
-        Callback<Result> callback) {
-      callback.success(new Result(), null);
+    @Override public Call<Result> getReverse(@Query("point.lat") double lat,
+        @Query("point.lon") double lon) {
+      return new TestCall();
     }
 
-    @Override public void getPlace(@Query("ids") String ids, Callback<Result> callback) {
-      callback.success(new Result(), null);
+    @Override public Call<Result> getPlace(@Query("ids") String ids) {
+      return new TestCall();
+    }
+  }
+
+  private class TestCall implements Call<Result> {
+    @Override public Response<Result> execute() throws IOException {
+      return Response.success(new Result());
+    }
+
+    @Override public void enqueue(Callback<Result> callback) {
+      callback.onResponse(null, Response.success(new Result()));
+    }
+
+    @Override public boolean isExecuted() {
+      return false;
+    }
+
+    @Override public void cancel() {
+    }
+
+    @Override public boolean isCanceled() {
+      return false;
+    }
+
+    @Override public Call<Result> clone() {
+      return null;
+    }
+
+    @Override public Request request() {
+      return null;
     }
   }
 
   private class TestCallback implements Callback<Result> {
     private Result result;
-    private RetrofitError error;
+    private Throwable error;
 
-    @Override public void success(Result result, Response response) {
-      this.result = result;
+    @Override public void onResponse(Call<Result> call, Response<Result> response) {
+      result = response.body();
     }
 
-    @Override public void failure(RetrofitError error) {
-      this.error = error;
+    @Override public void onFailure(Call<Result> call, Throwable t) {
+      error = t;
     }
   }
 
