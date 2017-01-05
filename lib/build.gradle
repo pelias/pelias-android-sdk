@@ -103,4 +103,4 @@ dependencies {
   }
 }
 
-apply from: file('gradle-mvn-push.gradle')
+apply from: file('../gradle-mvn-push.gradle')
