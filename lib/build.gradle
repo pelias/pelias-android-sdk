@@ -49,12 +49,12 @@ task copyTask(type: Copy) {
 }
 
 android {
-  compileSdkVersion 22
-  buildToolsVersion "22.0.1"
+  compileSdkVersion 25
+  buildToolsVersion "25.0.1"
 
   defaultConfig {
     minSdkVersion 15
-    targetSdkVersion 22
+    targetSdkVersion 25
     versionCode 4
     versionName version
   }
@@ -83,8 +83,8 @@ repositories {
 }
 
 dependencies {
-  compile 'com.android.support:appcompat-v7:22.2.1@aar'
-  compile 'com.android.support:support-v4:22.2.1@aar'
+  compile 'com.android.support:appcompat-v7:25.0.1@aar'
+  compile 'com.android.support:support-v4:25.0.1@aar'
   compile 'com.squareup.okhttp3:okhttp:3.5.0'
   compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
   compile 'com.squareup.retrofit2:retrofit:2.1.0'
