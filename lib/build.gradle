@@ -22,6 +22,7 @@ apply plugin: 'net.researchgate.release'
 
 group = GROUP
 version = VERSION_NAME
+project.archivesBaseName = POM_ARTIFACT_ID
 
 release {
   versionProperties = ['VERSION_NAME']
