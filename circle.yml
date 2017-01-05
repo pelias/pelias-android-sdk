@@ -11,11 +11,8 @@ machine:
 
 dependencies:
   pre:
-    - echo y | android update sdk --all --no-ui --force --filter "build-tools-19.0.3"
-    - echo y | android update sdk --all --no-ui --force --filter "platform-tools"
-    - echo y | android update sdk --all --no-ui --force --filter "android-18"
-    - echo y | android update sdk --all --no-ui --force --filter "addon-google_apis-google-18"
-    - echo y | android update sdk --all --no-ui --force --filter "android-19"
+    - echo y | android update sdk --all --no-ui --force --filter "build-tools-25.0.1"
+    - echo y | android update sdk --all --no-ui --force --filter "android-25"
     - echo y | android update sdk --all --no-ui --force --filter "extra-android-m2repository"
 
 test:
