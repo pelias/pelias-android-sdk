@@ -17,6 +17,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Main entry point for Pelias sample. Displays a {@link PeliasSearchView} and allows user to view
+ * autocomplete results.
+ */
 public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = MainActivity.class.getSimpleName();
@@ -54,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
   private void setupListView() {
     listView = (AutoCompleteListView) findViewById(R.id.list_view);
-    AutoCompleteAdapter autocompleteAdapter = new AutoCompleteAdapter(this, android.R.layout.simple_list_item_1);
+    AutoCompleteAdapter autocompleteAdapter = new AutoCompleteAdapter(this,
+        android.R.layout.simple_list_item_1);
     listView.setAdapter(autocompleteAdapter);
   }
 
