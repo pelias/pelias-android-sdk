@@ -30,8 +30,6 @@ release {
 
 afterReleaseBuild.dependsOn uploadArchives
 
-defaultTasks = ['clean', 'assembleDebug', 'checkstyle', 'copyTask', 'testDebug', 'install']
-
 task checkstyle(type: Checkstyle) {
   configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
   source 'src'
@@ -68,6 +66,7 @@ android {
   packagingOptions {
     exclude 'META-INF/LICENSE.txt'
   }
+  useLibrary 'org.apache.http.legacy'
 }
 
 tasks.withType(Test) {
