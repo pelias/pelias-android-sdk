@@ -4,6 +4,7 @@ import com.mapzen.pelias.BuildConfig;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.PeliasService;
 import com.mapzen.pelias.PeliasTest;
+import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
 import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.pelias.SimpleFeatureTest;
@@ -13,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.app.Activity;
@@ -26,15 +27,14 @@ import android.widget.TextView;
 import java.io.IOException;
 
 import okhttp3.Request;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.robolectric.Shadows.shadowOf;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Query;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.robolectric.Shadows.shadowOf;
-
-@RunWith(RobolectricGradleTestRunner.class) @Config(constants = BuildConfig.class, emulateSdk = 21,
+@RunWith(RobolectricTestRunner.class) @Config(constants = BuildConfig.class, sdk = 21,
     shadows = { ShadowInputMethodManager.class })
 public class PeliasSearchViewTest {
   private static final Activity ACTIVITY = Robolectric.setupActivity(Activity.class);
@@ -42,6 +42,7 @@ public class PeliasSearchViewTest {
   private PeliasSearchView peliasSearchView;
 
   @Before public void setUp() throws Exception {
+    ACTIVITY.setTheme(R.style.TestAppTheme);
     peliasSearchView = new PeliasSearchView(ACTIVITY);
   }
 
@@ -76,7 +77,7 @@ public class PeliasSearchViewTest {
     AutoCompleteTextView queryText = getQueryTextView();
     shadowOf(queryText).setViewFocus(false);
     shadowOf(queryText).setViewFocus(true);
-    Robolectric.flushForegroundScheduler();
+    Robolectric.flushForegroundThreadScheduler();
     assertThat(ShadowInputMethodManager.isSoftInputVisible()).isTrue();
   }
 
@@ -87,7 +88,7 @@ public class PeliasSearchViewTest {
     AutoCompleteTextView queryText = getQueryTextView();
     shadowOf(queryText).setViewFocus(true);
     shadowOf(queryText).setViewFocus(false);
-    Robolectric.flushForegroundScheduler();
+    Robolectric.flushForegroundThreadScheduler();
     assertThat(ShadowInputMethodManager.isSoftInputVisible()).isFalse();
   }
 
@@ -98,7 +99,7 @@ public class PeliasSearchViewTest {
     peliasSearchView.setAutoCompleteListView(listView);
     AutoCompleteTextView queryText = getQueryTextView();
     shadowOf(queryText).setViewFocus(true);
-    Robolectric.flushForegroundScheduler();
+    Robolectric.flushForegroundThreadScheduler();
     assertThat(ShadowInputMethodManager.isSoftInputVisible()).isFalse();
   }
 
@@ -110,7 +111,7 @@ public class PeliasSearchViewTest {
     peliasSearchView.setAutoCompleteListView(listView);
     AutoCompleteTextView queryText = getQueryTextView();
     shadowOf(queryText).setViewFocus(true);
-    Robolectric.flushForegroundScheduler();
+    Robolectric.flushForegroundThreadScheduler();
     assertThat(ShadowInputMethodManager.isSoftInputVisible()).isTrue();
   }
 

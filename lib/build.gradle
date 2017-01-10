@@ -66,7 +66,6 @@ android {
   packagingOptions {
     exclude 'META-INF/LICENSE.txt'
   }
-  useLibrary 'org.apache.http.legacy'
 }
 
 tasks.withType(Test) {
@@ -97,10 +96,8 @@ dependencies {
   testCompile 'org.easytesting:fest-assert-core:2.0M10'
   testCompile 'com.squareup.okhttp:mockwebserver:1.5.2'
   testCompile 'org.mockito:mockito-all:1.9.5'
-  testCompile('org.robolectric:robolectric:3.0-rc2') {
-    exclude group: 'commons-logging', module: 'commons-logging'
-    exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-  }
+  testCompile 'org.robolectric:robolectric:3.2.1'
+  testCompile 'com.android.support:support-v4:21.0.3'
 }
 
 apply from: file('../gradle-mvn-push.gradle')
