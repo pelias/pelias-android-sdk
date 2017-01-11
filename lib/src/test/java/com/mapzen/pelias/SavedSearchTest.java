@@ -5,7 +5,7 @@ import com.mapzen.pelias.widget.AutoCompleteItem;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.database.Cursor;
@@ -18,7 +18,7 @@ import static com.mapzen.pelias.SavedSearch.MAX_ENTRIES;
 import static com.mapzen.pelias.SimpleFeatureTest.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class) @Config(constants = BuildConfig.class, emulateSdk = 21)
+@RunWith(RobolectricTestRunner.class) @Config(constants = BuildConfig.class, sdk = 21)
 public class SavedSearchTest {
   SavedSearch savedSearch;
   Parcel payload;

@@ -6,14 +6,14 @@ import com.mapzen.pelias.gson.Properties;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.os.Parcel;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class) @Config(constants = BuildConfig.class, emulateSdk = 21)
+@RunWith(RobolectricTestRunner.class) @Config(constants = BuildConfig.class, sdk = 21)
 public class SimpleFeatureTest {
   @Test public void shouldReadAndWriteParcel() throws Exception {
     SimpleFeature before = getTestSimpleFeature();

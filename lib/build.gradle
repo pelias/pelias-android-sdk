@@ -1,0 +1,103 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+      url 'https://plugins.gradle.org/m2/'
+    }
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:2.2.2'
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+    classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    classpath 'net.researchgate:gradle-release:2.4.0'
+  }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'checkstyle'
+apply plugin: 'net.researchgate.release'
+
+group = GROUP
+version = VERSION_NAME
+project.archivesBaseName = POM_ARTIFACT_ID
+
+release {
+  versionProperties = ['VERSION_NAME']
+}
+
+afterReleaseBuild.dependsOn uploadArchives
+
+task checkstyle(type: Checkstyle) {
+  configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+  source 'src'
+  include '**/*.java'
+  exclude '**/gen/**'
+
+  classpath = files()
+}
+
+task copyTask(type: Copy) {
+  println "Copying com/mapzen/pelias/R.java to android/support/v7/appcompat/R.java"
+  from 'build/generated/source/r/debug/com/mapzen/pelias'
+  into 'build/generated/source/r/debug/android/support/v7/appcompat'
+  include 'R.java'
+  filter { line -> line.contains('package com.mapzen.pelias;') ? 'package android.support.v7.appcompat;' : line }
+}
+
+android {
+  compileSdkVersion 25
+  buildToolsVersion "25.0.1"
+
+  defaultConfig {
+    minSdkVersion 15
+    targetSdkVersion 25
+    versionCode 4
+    versionName version
+  }
+  sourceSets {
+    test {
+      java.srcDir file('src/test/java')
+      java.srcDir file('build/generated/source/r/debug')
+    }
+  }
+  packagingOptions {
+    exclude 'META-INF/LICENSE.txt'
+  }
+}
+
+tasks.withType(Test) {
+  testLogging {
+    exceptionFormat "full"
+    events "started", "skipped", "passed", "failed"
+    showStandardStreams true
+  }
+}
+
+repositories {
+  jcenter()
+  maven { url 'http://repo.maven.apache.org/maven2' }
+}
+
+dependencies {
+  compile 'com.android.support:appcompat-v7:25.1.0'
+  compile 'com.android.support:support-v4:25.1.0'
+  compile 'com.squareup.okhttp3:okhttp:3.5.0'
+  compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+  compile 'com.squareup.retrofit2:retrofit:2.1.0'
+  compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+  compile 'javax.annotation:javax.annotation-api:1.2'
+  compile 'com.github.frankiesardo:auto-parcel:0.3.1'
+  apt 'com.github.frankiesardo:auto-parcel-processor:0.3.1'
+
+  testCompile 'junit:junit:4.12'
+  testCompile 'org.easytesting:fest-assert-core:2.0M10'
+  testCompile 'com.squareup.okhttp:mockwebserver:1.5.2'
+  testCompile 'org.mockito:mockito-all:1.9.5'
+  testCompile 'org.robolectric:robolectric:3.2.1'
+  testCompile 'com.android.support:support-v4:21.0.3'
+}
+
+apply from: file('../gradle-mvn-push.gradle')

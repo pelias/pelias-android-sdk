@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.app.Activity;
@@ -19,7 +19,7 @@ import static android.view.animation.AnimationUtils.loadAnimation;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.buildActivity;
 
-@RunWith(RobolectricGradleTestRunner.class) @Config(constants = BuildConfig.class, emulateSdk = 21)
+@RunWith(RobolectricTestRunner.class) @Config(constants = BuildConfig.class, sdk = 21)
 public class AutoCompleteListViewTest {
   private static final Activity ACTIVITY = buildActivity(Activity.class).create().get();
 
