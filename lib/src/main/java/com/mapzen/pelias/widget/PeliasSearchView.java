@@ -85,6 +85,33 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
   private boolean cacheSearchResults = true;
   private boolean autoKeyboardShow = true;
 
+  private Callback<Result> suggestCallback = new Callback<Result>() {
+    @Override public void onResponse(Call<Result> call, Response<Result> response) {
+      final ArrayList<AutoCompleteItem> items = new ArrayList<>();
+      if (response != null && response.body() != null) {
+        final List<Feature> features = response.body().getFeatures();
+        if (features != null) {
+          for (Feature feature : features) {
+            items.add(new AutoCompleteItem(SimpleFeature.fromFeature(feature)));
+          }
+        }
+      }
+
+      if (autoCompleteListView == null) {
+        return;
+      }
+
+      final AutoCompleteAdapter adapter = (AutoCompleteAdapter) autoCompleteListView.getAdapter();
+      adapter.clear();
+      adapter.addAll(items);
+      adapter.notifyDataSetChanged();
+    }
+
+    @Override public void onFailure(Call<Result> call, Throwable t) {
+      Log.e(TAG, "Unable to fetch autocomplete results", t);
+    }
+  };
+
   /**
    * Constructs a new search view given a context.
    */
@@ -235,28 +262,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
       return;
     }
 
-    pelias.suggest(text, new Callback<Result>() {
-      @Override public void onResponse(Call<Result> call, Response<Result> response) {
-        final ArrayList<AutoCompleteItem> items = new ArrayList<>();
-        final List<Feature> features = response.body().getFeatures();
-        for (Feature feature : features) {
-          items.add(new AutoCompleteItem(SimpleFeature.fromFeature(feature)));
-        }
-
-        if (autoCompleteListView == null) {
-          return;
-        }
-
-        final AutoCompleteAdapter adapter = (AutoCompleteAdapter) autoCompleteListView.getAdapter();
-        adapter.clear();
-        adapter.addAll(items);
-        adapter.notifyDataSetChanged();
-      }
-
-      @Override public void onFailure(Call<Result> call, Throwable t) {
-        Log.e(TAG, "Unable to fetch autocomplete results", t);
-      }
-    });
+    pelias.suggest(text, suggestCallback);
   }
 
   /**
@@ -510,5 +516,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         removeCallbacks(backPressedRunnable);
       }
     }, 150);
+  }
+
+  Callback<Result> getSuggestCallback() {
+    return suggestCallback;
   }
 }
