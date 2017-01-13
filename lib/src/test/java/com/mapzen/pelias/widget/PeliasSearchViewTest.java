@@ -25,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 
 import okhttp3.Request;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -174,6 +176,20 @@ public class PeliasSearchViewTest {
     peliasSearchView.setQuery("query", true);
     assertThat(callback.result).isNotNull();
     assertThat(callback.error).isNull();
+  }
+
+  @Test public void onQueryTextSubmit_shouldHandleNullBody() throws Exception {
+    final AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+    final TestEmptyAdapter adapter = new TestEmptyAdapter();
+    listView.setAdapter(adapter);
+    peliasSearchView.setAutoCompleteListView(listView);
+    final Pelias pelias = new TestEmptyPelias();
+    final Callback<Result> callback = peliasSearchView.getSuggestCallback();
+    pelias.setLocationProvider(new PeliasTest.TestLocationProvider());
+    peliasSearchView.setPelias(pelias);
+    peliasSearchView.setCallback(callback);
+    peliasSearchView.setQuery("query", true);
+    assertThat(adapter.getCount()).isEqualTo(0);
   }
 
   @Test public void onItemClick_shouldSetQuery() throws Exception {
@@ -345,6 +361,90 @@ public class PeliasSearchViewTest {
 
     @Override public Request request() {
       return null;
+    }
+  }
+
+  private class TestEmptyPelias extends Pelias {
+    protected TestEmptyPelias() {
+      super(new TestEmptyPeliasService());
+    }
+  }
+
+  private class TestEmptyPeliasService implements PeliasService {
+    @Override public Call<Result> getSuggest(@Query("text") String query,
+        @Query("focus.point.lat") double lat, @Query("focus.point.lon") double lon) {
+      return new TestEmptyCall();
+    }
+
+    @Override public Call<Result> getSearch(@Query("text") String query,
+        @Query("focus.viewport.min_lon") double minLon,
+        @Query("focus.viewport.min_lat") double minLat,
+        @Query("focus.viewport.max_lon") double maxLon,
+        @Query("focus.viewport.max_lat") double maxLat) {
+      return new TestEmptyCall();
+    }
+
+    @Override public Call<Result> getSearch(@Query("text") String query,
+        @Query("focus.point.lat") double lat, @Query("focus.point.lon") double lon) {
+      return new TestEmptyCall();
+    }
+
+    @Override public Call<Result> getReverse(@Query("point.lat") double lat,
+        @Query("point.lon") double lon) {
+      return new TestEmptyCall();
+    }
+
+    @Override public Call<Result> getPlace(@Query("ids") String ids) {
+      return new TestEmptyCall();
+    }
+  }
+
+  private class TestEmptyCall implements Call<Result> {
+    @Override public Response<Result> execute() throws IOException {
+      return Response.success(null);
+    }
+
+    @Override public void enqueue(Callback<Result> callback) {
+      callback.onResponse(null, null);
+    }
+
+    @Override public boolean isExecuted() {
+      return false;
+    }
+
+    @Override public void cancel() {
+    }
+
+    @Override public boolean isCanceled() {
+      return false;
+    }
+
+    @Override public Call<Result> clone() {
+      return null;
+    }
+
+    @Override public Request request() {
+      return null;
+    }
+  }
+
+  private class TestEmptyAdapter extends AutoCompleteAdapter {
+    Collection<? extends AutoCompleteItem> items = new HashSet<>();
+
+    public TestEmptyAdapter() {
+      super(ACTIVITY, android.R.layout.simple_list_item_1);
+    }
+
+    @Override public void addAll(Collection<? extends AutoCompleteItem> collection) {
+      this.items = collection;
+    }
+
+    @Override public AutoCompleteItem getItem(int position) {
+      return new AutoCompleteItem("query");
+    }
+
+    @Override public int getCount() {
+      return items.size();
     }
   }
 
