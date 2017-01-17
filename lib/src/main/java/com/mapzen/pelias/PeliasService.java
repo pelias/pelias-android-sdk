@@ -15,7 +15,19 @@ public interface PeliasService {
    * Asynchronously request autocomplete results given a query and focus point.
    */
   @GET("/v1/autocomplete") Call<Result> getSuggest(@Query("text") String query,
-      @Query("focus.point.lat") double lat, @Query("focus.point.lon") double lon);
+      @Query("focus.point.lat") double lat,
+      @Query("focus.point.lon") double lon);
+
+  /**
+   * Asynchronously request autocomplete results given a query andfocus point.
+   * Limit results by layer and country.
+   */
+  @GET("/v1/autocomplete") Call<Result> getSuggest(@Query("text") String query,
+      @Query("focus.point.lat") double lat,
+      @Query("focus.point.lon") double lon,
+      @Query("layers") String layers,
+      @Query("boundary.country") String country,
+      @Query("sources") String source);
 
   /**
    * Asynchronously request search results given a query and bounding box.
@@ -38,6 +50,13 @@ public interface PeliasService {
    */
   @GET("/v1/reverse") Call<Result> getReverse(@Query("point.lat") double lat,
       @Query("point.lon") double lon);
+
+  /**
+   * Asynchronously issue reverse geocode request.
+   */
+  @GET("/v1/reverse") Call<Result> getReverse(@Query("point.lat") double lat,
+      @Query("point.lon") double lon,
+      @Query("sources") String sources);
 
   /**
    * Asynchronously request more information about places given their global unique identifiers.

@@ -77,11 +77,26 @@ public class PeliasTest {
     verify(mock).getSuggest(eq("test"), eq(1.0), eq(2.0));
   }
 
+  @Test public void suggest_getSuggestWithLayersCountrySources() throws Exception {
+    when(mock.getSuggest(anyString(), anyDouble(), anyDouble(), anyString(), anyString(),
+        anyString())).thenReturn(new TestCall());
+    peliasWithMock.setLocationProvider(new TestLocationProvider());
+    peliasWithMock.suggest("test", "venue", "us", "wof", callback);
+    verify(mock).getSuggest(eq("test"), eq(1.0), eq(2.0), eq("venue"), eq("us"), eq("wof"));
+  }
+
   @Test public void reverse_getReverseGeocode() throws Exception {
     when(mock.getReverse(anyDouble(), anyDouble())).thenReturn(new TestCall());
     peliasWithMock.setLocationProvider(new TestLocationProvider());
     peliasWithMock.reverse(30.0, 40.0, callback);
     verify(mock).getReverse(eq(30.0), eq(40.0));
+  }
+
+  @Test public void reverse_getReverseGeocodeWithSources() throws Exception {
+    when(mock.getReverse(anyDouble(), anyDouble(), anyString())).thenReturn(new TestCall());
+    peliasWithMock.setLocationProvider(new TestLocationProvider());
+    peliasWithMock.reverse(30.0, 40.0, "wof", callback);
+    verify(mock).getReverse(eq(30.0), eq(40.0), eq("wof"));
   }
 
   @Test public void place_shouldSendSearchRequestToServer() throws Exception {
