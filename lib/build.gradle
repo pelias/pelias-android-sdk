@@ -71,7 +71,7 @@ android {
 tasks.withType(Test) {
   testLogging {
     exceptionFormat "full"
-    events "started", "skipped", "passed", "failed"
+    events "skipped", "passed", "failed"
     showStandardStreams true
   }
 }
@@ -97,7 +97,6 @@ dependencies {
   testCompile 'com.squareup.okhttp:mockwebserver:1.5.2'
   testCompile 'org.mockito:mockito-all:1.9.5'
   testCompile 'org.robolectric:robolectric:3.2.1'
-  testCompile 'com.android.support:support-v4:21.0.3'
 }
 
 apply from: file('../gradle-mvn-push.gradle')
