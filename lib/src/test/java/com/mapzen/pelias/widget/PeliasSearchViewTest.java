@@ -312,6 +312,13 @@ public class PeliasSearchViewTest {
       return new TestCall();
     }
 
+    @Override public Call<Result> getSuggest(@Query("text") String query,
+        @Query("focus.point.lat") double lat, @Query("focus.point.lon") double lon,
+        @Query("layers") String layers, @Query("boundary.country") String country,
+        @Query("sources") String source) {
+      return new TestCall();
+    }
+
     @Override public Call<Result> getSearch(@Query("text") String query,
         @Query("focus.viewport.min_lon") double minLon,
         @Query("focus.viewport.min_lat") double minLat,
@@ -327,6 +334,12 @@ public class PeliasSearchViewTest {
 
     @Override public Call<Result> getReverse(@Query("point.lat") double lat,
         @Query("point.lon") double lon) {
+      return new TestCall();
+    }
+
+    @Override
+    public Call<Result> getReverse(@Query("point.lat") double lat, @Query("point.lon") double lon,
+        @Query("sources") String sources) {
       return new TestCall();
     }
 
@@ -376,6 +389,13 @@ public class PeliasSearchViewTest {
       return new TestEmptyCall();
     }
 
+    @Override public Call<Result> getSuggest(@Query("text") String query,
+        @Query("focus.point.lat") double lat, @Query("focus.point.lon") double lon,
+        @Query("layers") String layers, @Query("boundary.country") String country,
+        @Query("sources") String source) {
+      return new TestEmptyCall();
+    }
+
     @Override public Call<Result> getSearch(@Query("text") String query,
         @Query("focus.viewport.min_lon") double minLon,
         @Query("focus.viewport.min_lat") double minLat,
@@ -391,6 +411,12 @@ public class PeliasSearchViewTest {
 
     @Override public Call<Result> getReverse(@Query("point.lat") double lat,
         @Query("point.lon") double lon) {
+      return new TestEmptyCall();
+    }
+
+    @Override
+    public Call<Result> getReverse(@Query("point.lat") double lat, @Query("point.lon") double lon,
+        @Query("sources") String sources) {
       return new TestEmptyCall();
     }
 

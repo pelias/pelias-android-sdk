@@ -107,6 +107,18 @@ public class Pelias {
   }
 
   /**
+   * Returns autocomplete suggestions given a query string. The query will use the
+   * {@link PeliasLocationProvider} to retrieve a lat/lon to use as a focus point for the request.
+   * Results will be limited by the layers, country, and sources strings. The callback will be
+   * notified upon success or failure of query.
+   */
+  public void suggest(String query, String layers, String country, String sources,
+      Callback<Result> callback) {
+    service.getSuggest(query, locationProvider.getLat(), locationProvider.getLon(), layers, country,
+        sources).enqueue(callback);
+  }
+
+  /**
    * Requests autocomplete suggestions given a query and lat/lon. The lat/lon is used as a focus
    * point for results The callback will be notified upon success or failure of the query.
    */
@@ -148,6 +160,14 @@ public class Pelias {
    */
   public void reverse(double lat, double lon, Callback<Result> callback) {
     service.getReverse(lat, lon).enqueue(callback);
+  }
+
+  /**
+   * Issues a reverse geocode request given the lat/lon and limited to the sources. The callback
+   * will be notified upon success or failure of the query.
+   */
+  public void reverse(double lat, double lon, String sources, Callback<Result> callback) {
+    service.getReverse(lat, lon, sources).enqueue(callback);
   }
 
   /**

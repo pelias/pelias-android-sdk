@@ -7,6 +7,7 @@ import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
 import com.mapzen.pelias.SimpleFeature;
+import com.mapzen.pelias.SuggestFilter;
 import com.mapzen.pelias.gson.Feature;
 import com.mapzen.pelias.gson.Result;
 
@@ -84,6 +85,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
   private OnBackPressListener onBackPressListener;
   private boolean cacheSearchResults = true;
   private boolean autoKeyboardShow = true;
+  private SuggestFilter suggestFilter;
 
   private Callback<Result> suggestCallback = new Callback<Result>() {
     @Override public void onResponse(Call<Result> call, Response<Result> response) {
@@ -133,6 +135,14 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     disableDefaultSoftKeyboardBehaviour();
     setOnQueryTextListener(this);
     setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+  }
+
+  /**
+   * Set a filter to use when querying for autocomplete results.
+   * @param suggestFilter
+   */
+  public void setSuggestFilter(SuggestFilter suggestFilter) {
+    this.suggestFilter = suggestFilter;
   }
 
   /**
@@ -261,8 +271,12 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     if (pelias == null) {
       return;
     }
-
-    pelias.suggest(text, suggestCallback);
+    if (suggestFilter == null) {
+      pelias.suggest(text, suggestCallback);
+    } else {
+      pelias.suggest(text, suggestFilter.getLayersFilter(), suggestFilter.getCountryFilter(),
+          suggestFilter.getSources(), suggestCallback);
+    }
   }
 
   /**

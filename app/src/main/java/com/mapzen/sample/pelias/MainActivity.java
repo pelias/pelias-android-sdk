@@ -3,6 +3,7 @@ package com.mapzen.sample.pelias;
 import com.mapzen.pelias.BoundingBox;
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.PeliasLocationProvider;
+import com.mapzen.pelias.SuggestFilter;
 import com.mapzen.pelias.gson.Result;
 import com.mapzen.pelias.widget.AutoCompleteAdapter;
 import com.mapzen.pelias.widget.AutoCompleteListView;
@@ -82,5 +83,18 @@ public class MainActivity extends AppCompatActivity {
     });
     searchView.setIconifiedByDefault(false);
     searchView.setQueryHint(this.getString(R.string.search_hint));
+    searchView.setSuggestFilter(new SuggestFilter() {
+      @Override public String getCountryFilter() {
+        return "FR";
+      }
+
+      @Override public String getLayersFilter() {
+        return "address,venue";
+      }
+
+      @Override public String getSources() {
+        return "wof,osm,oa,gn";
+      }
+    });
   }
 }
