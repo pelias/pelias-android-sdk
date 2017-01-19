@@ -1,6 +1,7 @@
 package com.mapzen.pelias.widget;
 
 import android.os.Parcel;
+import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 
 import com.mapzen.pelias.Pelias;
@@ -49,6 +50,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
       final InputMethodManager imm =
           (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
       if (imm != null) {
+        editText.setCursorVisible(true);
         HIDDEN_METHOD_INVOKER.showSoftInputUnchecked(imm, PeliasSearchView.this, 0);
       }
     }
@@ -59,6 +61,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
       final InputMethodManager imm =
           (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
       if (imm != null) {
+        editText.setCursorVisible(false);
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
       }
     }
@@ -70,6 +73,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     }
   };
 
+  private EditText editText;
   private ListView autoCompleteListView;
   private SavedSearch savedSearch;
   private Pelias pelias;
@@ -86,6 +90,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
   private boolean cacheSearchResults = true;
   private boolean autoKeyboardShow = true;
   private SuggestFilter suggestFilter;
+  private boolean checkHideAutocompleteList = false;
 
   private Callback<Result> suggestCallback = new Callback<Result>() {
     @Override public void onResponse(Call<Result> call, Response<Result> response) {
@@ -114,6 +119,8 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     }
   };
 
+  private SearchSubmitListener searchSubmitListener;
+
   /**
    * Constructs a new search view given a context.
    */
@@ -135,6 +142,11 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     disableDefaultSoftKeyboardBehaviour();
     setOnQueryTextListener(this);
     setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+    setupEditText();
+  }
+
+  private void setupEditText() {
+    editText = (EditText) findViewById(R.id.search_src_text);
   }
 
   /**
@@ -152,31 +164,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     autoCompleteListView = listView;
     setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
       @Override public void onFocusChange(View view, boolean hasFocus) {
-        if (hasFocus) {
-          final Animation slideIn = loadAnimation(getContext(), R.anim.slide_in);
-          setAutoCompleteAdapterIcon(recentSearchIconResourceId);
-          loadSavedSearches();
-          listView.setVisibility(VISIBLE);
-          listView.setAnimation(slideIn);
-          if (autoKeyboardShow) {
-            postDelayed(showImeRunnable, 300);
-          }
-          setOnQueryTextListener(PeliasSearchView.this);
-        } else {
-          final Animation slideOut = loadAnimation(getContext(), R.anim.slide_out);
-          listView.setVisibility(GONE);
-          listView.setAnimation(slideOut);
-          postDelayed(hideImeRunnable, 300);
-          setOnQueryTextListener(null);
-        }
-
-        // Notify secondary listener
-        if (onPeliasFocusChangeListener != null) {
-          onPeliasFocusChangeListener.onFocusChange(view, hasFocus);
-        }
-
-        focusedViewHasFocus = hasFocus;
-        postDelayed(backPressedRunnable, 300);
+        PeliasSearchView.this.onFocusChange(view, hasFocus);
       }
     });
 
@@ -196,6 +184,63 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
    */
   public void enableAutoKeyboardShow() {
     autoKeyboardShow = true;
+  }
+
+  public void setSearchSubmitListener(SearchSubmitListener listener) {
+    searchSubmitListener = listener;
+  }
+
+  private void handleSearchGainingFocus() {
+    setAutoCompleteAdapterIcon(recentSearchIconResourceId);
+    loadSavedSearches();
+    safeShowAutocompleteList();
+    setOnQueryTextListener(PeliasSearchView.this);
+  }
+
+  private void handleSearchLosingFocus() {
+    safeHideAutocompleteList();
+    postDelayed(hideImeRunnable, 300);
+    setOnQueryTextListener(null);
+  }
+
+  private void safeShowAutocompleteList() {
+    if (autoCompleteListView == null) {
+      return;
+    }
+    if (autoCompleteListView.getVisibility() != VISIBLE) {
+      final Animation slideIn = loadAnimation(getContext(), R.anim.slide_in);
+      autoCompleteListView.setVisibility(VISIBLE);
+      autoCompleteListView.setAnimation(slideIn);
+    }
+    if (autoKeyboardShow) {
+      postDelayed(showImeRunnable, 300);
+    }
+  }
+
+  /**
+   * Checks whether autocomplete list should be hidden and if so, hides it.
+   */
+  private void safeHideAutocompleteList() {
+    if (checkHideAutocompleteList) {
+      checkHideAutocompleteList = false;
+      if (searchSubmitListener.hideAutocompleteOnSearchSubmit()) {
+        hideAutocompleteList();
+      }
+    } else {
+      hideAutocompleteList();
+    }
+  }
+
+  /**
+   * Hides the autocomplete list with animation.
+   */
+  private void hideAutocompleteList() {
+    if (autoCompleteListView == null) {
+      return;
+    }
+    final Animation slideOut = loadAnimation(getContext(), R.anim.slide_out);
+    autoCompleteListView.setVisibility(GONE);
+    autoCompleteListView.setAnimation(slideOut);
   }
 
   /**
@@ -219,7 +264,9 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
   @Override public boolean onQueryTextSubmit(String query) {
     if (pelias != null) {
-      pelias.search(query, callback);
+      if (searchSubmitListener == null || searchSubmitListener.searchOnSearchKeySubmit()) {
+        pelias.search(query, callback);
+      }
     }
 
     storeSavedSearch(query, null);
@@ -227,8 +274,11 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     if (onSubmitListener != null) {
       onSubmitListener.onSubmit();
     }
+    if (searchSubmitListener != null) {
+      checkHideAutocompleteList = true;
+    }
     textSubmitted = true;
-    clearFocus();
+    onFocusChange(this, false);
     resetCursorPosition();
     return false;
   }
@@ -381,7 +431,6 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
   }
 
   private void resetCursorPosition() {
-    EditText editText = (EditText) findViewById(R.id.search_src_text);
     if (editText != null) {
       editText.setSelection(0);
     }
@@ -423,7 +472,11 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
           } else {
             final Result result = new Result();
             final ArrayList<Feature> features = new ArrayList<>(1);
-            clearFocus();
+            if (hasFocus()) {
+              clearFocus();
+            } else {
+              onFocusChange(PeliasSearchView.this, false);
+            }
             setQuery(item.getText(), false);
             resetCursorPosition();
             features.add(item.getSimpleFeature().toFeature());
@@ -437,6 +490,22 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
         }
       };
     }
+  }
+
+  private void onFocusChange(View view, boolean hasFocus) {
+    if (hasFocus) {
+      handleSearchGainingFocus();
+    } else {
+      handleSearchLosingFocus();
+    }
+
+    // Notify secondary listener
+    if (onPeliasFocusChangeListener != null) {
+      onPeliasFocusChangeListener.onFocusChange(view, hasFocus);
+    }
+    focusedViewHasFocus = hasFocus;
+
+    postDelayed(backPressedRunnable, 300);
   }
 
   /**
@@ -535,4 +604,5 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
   Callback<Result> getSuggestCallback() {
     return suggestCallback;
   }
+
 }

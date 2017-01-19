@@ -8,6 +8,9 @@ import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
 import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.pelias.SimpleFeatureTest;
+import com.mapzen.pelias.gson.Feature;
+import com.mapzen.pelias.gson.Geometry;
+import com.mapzen.pelias.gson.Properties;
 import com.mapzen.pelias.gson.Result;
 
 import org.junit.Before;
@@ -25,11 +28,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import okhttp3.Request;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,26 +66,26 @@ public class PeliasSearchViewTest {
   @Test public void setAutoCompleteListView_shouldShowListViewWhenQueryGetsFocus()
       throws Exception {
     AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
-    listView.setVisibility(View.GONE);
+    listView.setVisibility(GONE);
     peliasSearchView.setAutoCompleteListView(listView);
     AutoCompleteTextView queryText = getQueryTextView();
     shadowOf(queryText).setViewFocus(true);
-    assertThat(listView.getVisibility()).isEqualTo(View.VISIBLE);
+    assertThat(listView.getVisibility()).isEqualTo(VISIBLE);
   }
 
   @Test public void setAutoCompleteListView_shouldHideListViewWhenQueryLosesFocus()
       throws Exception {
     AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
-    listView.setVisibility(View.VISIBLE);
+    listView.setVisibility(VISIBLE);
     peliasSearchView.setAutoCompleteListView(listView);
     AutoCompleteTextView queryText = getQueryTextView();
     shadowOf(queryText).setViewFocus(false);
-    assertThat(listView.getVisibility()).isEqualTo(View.GONE);
+    assertThat(listView.getVisibility()).isEqualTo(GONE);
   }
 
   @Test public void setAutoCompleteListView_shouldShowImeWhenQueryGetsFocus() throws Exception {
     AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
-    listView.setVisibility(View.GONE);
+    listView.setVisibility(GONE);
     peliasSearchView.setAutoCompleteListView(listView);
     AutoCompleteTextView queryText = getQueryTextView();
     shadowOf(queryText).setViewFocus(false);
@@ -85,7 +96,7 @@ public class PeliasSearchViewTest {
 
   @Test public void setAutoCompleteListView_shouldHideImeWhenQueryGetsFocus() throws Exception {
     AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
-    listView.setVisibility(View.GONE);
+    listView.setVisibility(GONE);
     peliasSearchView.setAutoCompleteListView(listView);
     AutoCompleteTextView queryText = getQueryTextView();
     shadowOf(queryText).setViewFocus(true);
@@ -96,7 +107,7 @@ public class PeliasSearchViewTest {
 
   @Test public void disableAutoKeyboardShow_shouldNotShowImeWhenQueryGetsFocus() throws Exception {
     AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
-    listView.setVisibility(View.GONE);
+    listView.setVisibility(GONE);
     peliasSearchView.disableAutoKeyboardShow();
     peliasSearchView.setAutoCompleteListView(listView);
     AutoCompleteTextView queryText = getQueryTextView();
@@ -107,7 +118,7 @@ public class PeliasSearchViewTest {
 
   @Test public void enableAutoKeyboardShow_shouldShowImeWhenQueryGetsFocus() throws Exception {
     AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
-    listView.setVisibility(View.GONE);
+    listView.setVisibility(GONE);
     peliasSearchView.disableAutoKeyboardShow();
     peliasSearchView.enableAutoKeyboardShow();
     peliasSearchView.setAutoCompleteListView(listView);
@@ -117,10 +128,33 @@ public class PeliasSearchViewTest {
     assertThat(ShadowInputMethodManager.isSoftInputVisible()).isTrue();
   }
 
-  @Test public void onQueryTextSubmit_shouldClearFocus() throws Exception {
+  @Test public void onQueryTextSubmit_shouldNotClearFocus() throws Exception {
     peliasSearchView.requestFocus();
     peliasSearchView.onQueryTextSubmit("query");
-    assertThat(peliasSearchView.isFocused()).isFalse();
+    assertThat(peliasSearchView.isFocused()).isTrue();
+  }
+
+  @Test public void onQueryTextSubmit_shouldHideListView() throws Exception {
+    final AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+    peliasSearchView.setAutoCompleteListView(listView);
+    peliasSearchView.onQueryTextSubmit("query");
+    assertThat(listView.getVisibility()).isEqualTo(GONE);
+  }
+
+  @Test public void onQueryTextSubmit_submitListener_shouldNotHideListView() throws Exception {
+    final AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+    peliasSearchView.setAutoCompleteListView(listView);
+    peliasSearchView.setSearchSubmitListener(new TestSearchSubmitListener());
+    peliasSearchView.onQueryTextSubmit("query");
+    assertThat(listView.getVisibility()).isEqualTo(VISIBLE);
+  }
+
+  @Test public void onQueryTextSubmit_submitListener_shouldNotSearch() throws Exception {
+    peliasSearchView.setSearchSubmitListener(new TestSearchSubmitListener());
+    Pelias pelias = mock(Pelias.class);
+    peliasSearchView.setPelias(pelias);
+    peliasSearchView.onQueryTextSubmit("query");
+    verify(pelias, times(0)).search(anyString(), any(Callback.class));
   }
 
   @Test public void onQueryTextSubmit_shouldSaveSearch() throws Exception {
@@ -198,6 +232,23 @@ public class PeliasSearchViewTest {
     peliasSearchView.setAutoCompleteListView(listView);
     listView.performItemClick(null, 1, 0);
     assertThat(peliasSearchView.getQuery().toString()).isEqualTo("query");
+  }
+
+  @Test public void onItemClick_simpleFeature_shouldSetQuery() throws Exception {
+    final AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+    listView.setAdapter(new TestSimpleFeatureAdapter());
+    peliasSearchView.setAutoCompleteListView(listView);
+    listView.performItemClick(null, 1, 0);
+    assertThat(peliasSearchView.getQuery().toString()).isEqualTo("query");
+  }
+
+  @Test public void onItemClick_noFocus_shouldHideListView() throws Exception {
+    final AutoCompleteListView listView = new AutoCompleteListView(ACTIVITY);
+    listView.setAdapter(new TestSimpleFeatureAdapter());
+    peliasSearchView.setAutoCompleteListView(listView);
+    peliasSearchView.clearFocus();
+    listView.performItemClick(null, 1, 0);
+    assertThat(listView.getVisibility()).isEqualTo(GONE);
   }
 
   @Test public void onQueryTextSubmit_shouldNotifyOnSubmitListener() throws Exception {
@@ -501,6 +552,27 @@ public class PeliasSearchViewTest {
     }
   }
 
+  private class TestSimpleFeatureAdapter extends AutoCompleteAdapter {
+    public TestSimpleFeatureAdapter() {
+      super(ACTIVITY, android.R.layout.simple_list_item_1);
+    }
+
+    @Override public AutoCompleteItem getItem(int position) {
+      Feature feature = new Feature();
+      feature.properties = new Properties();
+      feature.properties.label = "query";
+      feature.geometry = new Geometry();
+      feature.geometry.coordinates = new ArrayList<>();
+      feature.geometry.coordinates.add(0.0);
+      feature.geometry.coordinates.add(1.0);
+      return new AutoCompleteItem(SimpleFeature.fromFeature(feature));
+    }
+
+    @Override public int getCount() {
+      return 1;
+    }
+  }
+
   private class TestOnSubmitListener implements PeliasSearchView.OnSubmitListener {
     private boolean submit;
 
@@ -522,6 +594,17 @@ public class PeliasSearchViewTest {
 
     @Override public void onBackPressed() {
       pressed = true;
+    }
+  }
+
+  private class TestSearchSubmitListener implements SearchSubmitListener {
+
+    @Override public boolean searchOnSearchKeySubmit() {
+      return false;
+    }
+
+    @Override public boolean hideAutocompleteOnSearchSubmit() {
+      return false;
     }
   }
 }
