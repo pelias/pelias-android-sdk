@@ -1,7 +1,6 @@
 package com.mapzen.pelias.widget;
 
 import android.os.Parcel;
-import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 
 import com.mapzen.pelias.Pelias;
