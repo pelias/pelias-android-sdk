@@ -8,6 +8,7 @@ import com.mapzen.pelias.gson.Result;
 import com.mapzen.pelias.widget.AutoCompleteAdapter;
 import com.mapzen.pelias.widget.AutoCompleteListView;
 import com.mapzen.pelias.widget.PeliasSearchView;
+import com.mapzen.pelias.widget.SearchSubmitListener;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -94,6 +95,15 @@ public class MainActivity extends AppCompatActivity {
 
       @Override public String getSources() {
         return "wof,osm,oa,gn";
+      }
+    });
+    searchView.setSearchSubmitListener(new SearchSubmitListener() {
+      @Override public boolean searchOnSearchKeySubmit() {
+        return false;
+      }
+
+      @Override public boolean hideAutocompleteOnSearchSubmit() {
+        return false;
       }
     });
   }
