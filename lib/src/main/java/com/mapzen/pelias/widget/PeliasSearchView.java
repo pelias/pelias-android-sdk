@@ -1,8 +1,5 @@
 package com.mapzen.pelias.widget;
 
-import android.os.Parcel;
-import android.view.inputmethod.EditorInfo;
-
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
@@ -12,12 +9,14 @@ import com.mapzen.pelias.gson.Feature;
 import com.mapzen.pelias.gson.Result;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.os.ResultReceiver;
 import android.support.v7.widget.SearchView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -29,11 +28,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.animation.AnimationUtils.loadAnimation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.view.animation.AnimationUtils.loadAnimation;
 
 /**
  * Main UI component for interaction with {@link Pelias}. Provides ability to display autocomplete
@@ -151,6 +149,13 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
   private void setupEditText() {
     editText = (EditText) findViewById(R.id.search_src_text);
+    editText.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        if (hasFocus()) {
+          onFocusChange(PeliasSearchView.this, true);
+        }
+      }
+    });
   }
 
   /**
@@ -191,6 +196,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
       }
     });
   }
+
 
   /**
    * Prevent the keyboard from showing for example when the autocomplete list is shown and
