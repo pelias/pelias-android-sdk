@@ -1,8 +1,5 @@
 package com.mapzen.pelias.widget;
 
-import android.os.Parcel;
-import android.view.inputmethod.EditorInfo;
-
 import com.mapzen.pelias.Pelias;
 import com.mapzen.pelias.R;
 import com.mapzen.pelias.SavedSearch;
@@ -12,13 +9,16 @@ import com.mapzen.pelias.gson.Feature;
 import com.mapzen.pelias.gson.Result;
 
 import android.content.Context;
+import android.os.Parcel;
 import android.os.ResultReceiver;
 import android.support.v7.widget.SearchView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -28,11 +28,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.animation.AnimationUtils.loadAnimation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.view.animation.AnimationUtils.loadAnimation;
 
 /**
  * Main UI component for interaction with {@link Pelias}. Provides ability to display autocomplete
@@ -51,6 +50,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
       if (imm != null) {
         editText.setCursorVisible(true);
         HIDDEN_METHOD_INVOKER.showSoftInputUnchecked(imm, PeliasSearchView.this, 0);
+        imeVisible = true;
       }
     }
   };
@@ -62,9 +62,11 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
       if (imm != null) {
         editText.setCursorVisible(false);
         imm.hideSoftInputFromWindow(getWindowToken(), 0);
+        imeVisible = false;
       }
     }
   };
+  private boolean imeVisible = false;
 
   private Runnable backPressedRunnable = new Runnable() {
     @Override public void run() {
@@ -119,6 +121,7 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
   };
 
   private SearchSubmitListener searchSubmitListener;
+  private boolean dismissKeyboardOnListScroll = false;
 
   /**
    * Constructs a new search view given a context.
@@ -146,6 +149,13 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
   private void setupEditText() {
     editText = (EditText) findViewById(R.id.search_src_text);
+    editText.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        if (hasFocus()) {
+          onFocusChange(PeliasSearchView.this, true);
+        }
+      }
+    });
   }
 
   /**
@@ -168,7 +178,25 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
     });
 
     autoCompleteListView.setOnItemClickListener(new OnItemClickHandler().invoke());
+    autoCompleteListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+      int scrollState = SCROLL_STATE_IDLE;
+
+      @Override public void onScrollStateChanged(AbsListView absListView, int i) {
+        scrollState = i;
+      }
+
+      @Override public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+        if (dismissKeyboardOnListScroll && scrollState != SCROLL_STATE_IDLE && imeVisible) {
+          if (searchSubmitListener != null) {
+            checkHideAutocompleteList = true;
+          }
+          onFocusChange(PeliasSearchView.this, false);
+        }
+      }
+    });
   }
+
 
   /**
    * Prevent the keyboard from showing for example when the autocomplete list is shown and
@@ -187,6 +215,14 @@ public class PeliasSearchView extends SearchView implements SearchView.OnQueryTe
 
   public void setSearchSubmitListener(SearchSubmitListener listener) {
     searchSubmitListener = listener;
+  }
+
+  /**
+   * Optionally dismiss the keyboard when the user scrolls the autocomplete list.
+   * @param dismissOnScroll
+   */
+  public void setDismissKeyboardOnListScroll(boolean dismissOnScroll) {
+    dismissKeyboardOnListScroll = dismissOnScroll;
   }
 
   private void handleSearchGainingFocus() {
