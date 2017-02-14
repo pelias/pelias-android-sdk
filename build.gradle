@@ -22,4 +22,4 @@ task clean(type: Delete) {
   delete rootProject.buildDir
 }
 
-defaultTasks = ['clean', 'assembleDebug', 'checkstyle', 'copyTask', 'testDebug', 'install']
+defaultTasks = ['clean', 'assembleDebug', 'checkstyle', 'copyTask', 'testDebugUnitTest', 'install']
