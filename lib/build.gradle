@@ -25,10 +25,10 @@ version = VERSION_NAME
 project.archivesBaseName = POM_ARTIFACT_ID
 
 release {
+  tagTemplate = 'pelias-android-sdk-${version}'
+  versionPropertyFile = '../gradle.properties'
   versionProperties = ['VERSION_NAME']
 }
-
-afterReleaseBuild.dependsOn uploadArchives
 
 task checkstyle(type: Checkstyle) {
   configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
