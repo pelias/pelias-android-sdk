@@ -9,95 +9,72 @@ Android SDK for Pelias
 
 Pelias Android SDK is a client-side Java wrapper for Pelias plus Android specific integrations.
 
-#### Initialization
+### Initialization
 
-Pelias provides a simple singleton which can be statically included in your application.
+The `Pelias` class provides a simple interface to the [Pelias geocoder](https://github.com/pelias/pelias) which can be included in your application.
 
 ```java
-import static com.mapzen.android.Pelias.getPelias;
-
-getPelias().<method> ...
-
+Pelias pelias = new Pelias();
 ```
 
-#### Suggest
+### Suggest
+
+The suggest endpoint provides fast type-ahead autocomplete results.
 
 ```java
-import static com.mapzen.android.Pelias.getPelias;
-
-getPelias().suggest("term to search", Callback<Result>);
+pelias.suggest("term to search", lat, lon, Callback<Result>);
 ```
 
-#### Search
+### Search
+
+The search endpoint provides locally and globally relevant full-text search results for addresses and POIs.
 
 ```java
-import static com.mapzen.android.Pelias.getPelias;
-
-getPelias().search("term to search", "<viewbox>", Callback<Result>);
-````
-
-#### Custom Endpoint
-
-If you have deployed your own instance of pelias described [here][2] you can set it on the class before initializing
-
-```java
-getPeliasWithEndpoint("http://your-pelias-domain.com").search("term to search", "<viewbox>", Callback<Result>);
+pelias.search("term to search", lat, lon, Callback<Result>);
 ```
 
+### Custom Endpoint
 
-#### Testing
+If you have [deployed your own instance of Pelias][2] you can set it on the class before initializing.
 
-The current stratedgy for testing involves mocking the service instance which is an retrofit interface which describes the paths to the API.
+```java
 
-You can extend Pelias where you can inject you mock object ... we use Mockito which is awesome.
+Pelias pelias = new Pelias("https://your-pelias-domain.com");
+```
+
+### Testing
+
+The current strategy for testing involves mocking the service instance using a [Retrofit](https://github.com/square/retrofit) interface which describes the paths to the API.
 
 ```java
 package com.mapzen.android;
 
 import org.mockito.Mockito;
 
-public final class TestPelias extends Pelias {
-    protected TestPelias(PeliasService service) {
-        super(service);
+public class TestPelias extends Pelias {
+  public TestPelias(PeliasService service) {
+    super(service);
+  }
+  
+  private class TestPeliasService implements PeliasService {
+    @Override public Call<Result> getSuggest(@Query("text") String query,
+        @Query("focus.point.lat") double lat, @Query("focus.point.lon") double lon) {
+      return new TestCall();
+    }
+    ..
+  }
+  
+  private class TestCall implements Call<Result> {
+    @Override public Response<Result> execute() throws IOException {
+      return Response.success(new Result());
     }
 
-    public static PeliasService getPeliasMock() {
-        PeliasService service = Mockito.mock(PeliasService.class);
-        instance = new TestPelias(service);
-        return service;
+    @Override public void enqueue(Callback<Result> callback) {
+      callback.onResponse(null, Response.success(new Result()));
     }
+  }
 }
 ```
-
-Then when you want to interact with Pelias in stests you can just feed it a mock.
-
-```java
-@Captor
-@SuppressWarnings("unused")
-ArgumentCaptor<Callback<Result>> peliasCallback;
-    
-
-MockitoAnnotations.initMocks(this);
-PeliasService peliasServiceMock = TestPelias.getPeliasMock();
-    
-Mockito.verify(peliasServiceMock)
-  .getSearch(Mockito.eq("Empire State Building"), Mockito.anyString(), peliasCallback.capture());
-
-```
-With this you can verify which arguments got sent to the service ... and then to test success or failure path you can can capture the callback and retrive the value and call respective callbacks with your own object mocks you want to have returned in your test.
-
-**success**
-
-```java
-peliasCallback.getValue().success(results, response);
-```
-
-**failure**
-
-```java
-peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
-```
-
 
 ## Install
 
@@ -113,7 +90,7 @@ Include dependency using Maven.
 <dependency>
   <groupId>com.mapzen.android</groupId>
   <artifactId>pelias-android-sdk</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -122,8 +99,8 @@ Include dependency using Maven.
 Include dependency using Gradle.
 
 ```groovy
-compile 'com.mapzen.android:pelias-android-sdk:1.0.0'
+compile 'com.mapzen.android:pelias-android-sdk:1.1.0'
 ```
 
-[1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/1.0.0/pelias-android-sdk-1.0.0.aar
-[2]: https://github.com/mapzen/pelias#setup-performance-information
+[1]: http://search.maven.org/remotecontent?filepath=com/mapzen/android/pelias-android-sdk/1.1.0/pelias-android-sdk-1.1.0.aar
+[2]: https://github.com/pelias/pelias#how-can-i-install-my-own-instance-of-pelias
