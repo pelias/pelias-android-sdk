@@ -1,6 +1,7 @@
 package com.mapzen.pelias;
 
 import com.mapzen.pelias.gson.Result;
+import com.mapzen.pelias.http.Tls12OkHttpClientFactory;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -51,8 +52,8 @@ public class Pelias {
       requestInterceptor.setRequestHandler(requestHandler);
     }
 
-    final OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
-    clientBuilder.addNetworkInterceptor(requestInterceptor);
+    final OkHttpClient.Builder clientBuilder = Tls12OkHttpClientFactory.enableTls12OnPreLollipop(
+        new OkHttpClient.Builder().addNetworkInterceptor(requestInterceptor));
 
     if (debug) {
       final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
