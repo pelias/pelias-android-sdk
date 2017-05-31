@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void setupPelias() {
     pelias = new Pelias();
+    pelias.setDebug(true);
     pelias.setLocationProvider(peliasLocationProvider);
   }
 
