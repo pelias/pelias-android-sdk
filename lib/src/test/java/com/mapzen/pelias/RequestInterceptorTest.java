@@ -42,7 +42,7 @@ public class RequestInterceptorTest {
     }
 
     @Override public Response proceed(Request request) throws IOException {
-      return new Response.Builder().request(request).protocol(Protocol.HTTP_1_1).code(200).build();
+      return new Response.Builder().request(request).message("message").protocol(Protocol.HTTP_1_1).code(200).build();
     }
 
     @Override public Connection connection() {

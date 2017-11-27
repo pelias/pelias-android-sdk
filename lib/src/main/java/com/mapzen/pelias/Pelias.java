@@ -5,6 +5,7 @@ import com.mapzen.pelias.http.Tls12OkHttpClientFactory;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -123,8 +124,10 @@ public class Pelias {
    * Requests autocomplete suggestions given a query and lat/lon. The lat/lon is used as a focus
    * point for results The callback will be notified upon success or failure of the query.
    */
-  public void suggest(String query, double lat, double lon, Callback<Result> callback) {
-    service.getSuggest(query, lat, lon).enqueue(callback);
+  public Call<Result> suggest(String query, double lat, double lon, Callback<Result> callback) {
+    Call<Result> call = service.getSuggest(query, lat, lon);
+    call.enqueue(callback);
+    return call;
   }
 
   /**
@@ -132,8 +135,8 @@ public class Pelias {
    * generate a bounding box for results. The callback will be notified upon success or failure of
    * the query.
    */
-  public void search(String query, Callback<Result> callback) {
-    search(query, locationProvider.getBoundingBox(), callback);
+  public Call<Result> search(String query, Callback<Result> callback) {
+    return search(query, locationProvider.getBoundingBox(), callback);
   }
 
   /**
@@ -141,9 +144,11 @@ public class Pelias {
    * generate relevant results. The callback will be notified upon success or failure of
    * the query.
    */
-  public void search(String query, BoundingBox box, Callback<Result> callback) {
-    service.getSearch(query, box.getMinLat(), box.getMinLon(), box.getMaxLat(), box.getMaxLon())
-        .enqueue(callback);
+  public Call<Result> search(String query, BoundingBox box, Callback<Result> callback) {
+    Call<Result> call = service.getSearch(query, box.getMinLat(), box.getMinLon(), box.getMaxLat(),
+        box.getMaxLon());
+    call.enqueue(callback);
+    return call;
   }
 
   /**
@@ -151,32 +156,40 @@ public class Pelias {
    * generate relevant results. The callback will be notified upon success or failure of
    * the query.
    */
-  public void search(String query, double lat, double lon, Callback<Result> callback) {
-    service.getSearch(query, lat, lon).enqueue(callback);
+  public Call<Result> search(String query, double lat, double lon, Callback<Result> callback) {
+    Call<Result> call = service.getSearch(query, lat, lon);
+    call.enqueue(callback);
+    return call;
   }
 
   /**
    * Issues a reverse geocode request given the lat/lon. The callback will be notified upon success
    * or failure of the query.
    */
-  public void reverse(double lat, double lon, Callback<Result> callback) {
-    service.getReverse(lat, lon).enqueue(callback);
+  public Call<Result> reverse(double lat, double lon, Callback<Result> callback) {
+    Call<Result> call = service.getReverse(lat, lon);
+    call.enqueue(callback);
+    return call;
   }
 
   /**
    * Issues a reverse geocode request given the lat/lon and limited to the sources. The callback
    * will be notified upon success or failure of the query.
    */
-  public void reverse(double lat, double lon, String sources, Callback<Result> callback) {
-    service.getReverse(lat, lon, sources).enqueue(callback);
+  public Call<Result> reverse(double lat, double lon, String sources, Callback<Result> callback) {
+    Call<Result> call = service.getReverse(lat, lon, sources);
+    call.enqueue(callback);
+    return call;
   }
 
   /**
    * Issues a place request for a given global identifier. The callback will be notified upon
    * success or failure of the query.
    */
-  public void place(String gid, Callback<Result> callback) {
-    service.getPlace(gid).enqueue(callback);
+  public Call<Result> place(String gid, Callback<Result> callback) {
+    Call<Result> call =  service.getPlace(gid);
+    call.enqueue(callback);
+    return call;
   }
 
   /**
